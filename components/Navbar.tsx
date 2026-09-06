@@ -440,6 +440,7 @@ const [searchQuery, setSearchQuery] =
   />
 </button>
 {/* ACCOUNT */}
+{/* ACCOUNT */}
 
 {status !== "loading" && (
   <>
@@ -455,7 +456,7 @@ const [searchQuery, setSearchQuery] =
         />
 
         <span className="hidden xl:block text-[9px] font-bold uppercase tracking-[0.16em]">
-          Account
+          {session.user.name || "Account"}
         </span>
       </Link>
     ) : (
@@ -476,6 +477,7 @@ const [searchQuery, setSearchQuery] =
     )}
   </>
 )}
+ 
 
             {/* WISHLIST */}
 
