@@ -474,6 +474,7 @@ useEffect(() => {
   />
 </button>
 {/* ACCOUNT */}
+{/* ACCOUNT */}
 
 {status !== "loading" && (
   <>
@@ -489,7 +490,7 @@ useEffect(() => {
         />
 
         <span className="hidden xl:block text-[9px] font-bold uppercase tracking-[0.16em]">
-          Account
+          {session.user.name || "Account"}
         </span>
       </Link>
     ) : (
@@ -510,6 +511,7 @@ useEffect(() => {
     )}
   </>
 )}
+ 
 
             {/* WISHLIST */}
 
