@@ -1,11 +1,11 @@
 "use client";
 
 import { SlidersHorizontal } from "lucide-react";
-import { Suspense, useMemo, useState } from "react";
+import { Suspense,useEffect,useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import ProductCard from "@/components/ProductCard";
-import { products } from "@/data/products";
+import type { Product } from "@/data/products";
 
 const categories = [
   "All",
@@ -24,7 +24,46 @@ const sortOptions = [
 
 function ShopContent() {
   const searchParams = useSearchParams();
+  const [products, setProducts] = useState<
+  Product[]
+>([]);
 
+const [loading, setLoading] =
+  useState(true);
+
+const [error, setError] =
+  useState("");
+
+useEffect(() => {
+  const loadProducts = async () => {
+    try {
+      const response = await fetch(
+        "/api/products"
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Unable to load products."
+        );
+      }
+
+      setProducts(data);
+    } catch (error) {
+      console.error(error);
+
+      setError(
+        "Unable to load products."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadProducts();
+}, []);
   const categoryFromUrl = searchParams.get("category");
 
   const initialCategory =
@@ -70,7 +109,7 @@ function ShopContent() {
     }
 
     return result;
-  }, [activeCategory, sortBy]);
+  }, [products,activeCategory, sortBy]);
 
   return (
     <main className="min-h-screen bg-[#f5f3ee] text-[#0a0a0a]">
@@ -192,40 +231,46 @@ function ShopContent() {
 
         <div className="mx-auto max-w-[1600px]">
 
-          {filteredProducts.length > 0 ? (
+          {loading ? (
+  <div className="flex min-h-[400px] items-center justify-center">
+    <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-black/40">
+      Loading Products...
+    </p>
+  </div>
+) : error ? (
+  <div className="flex min-h-[400px] items-center justify-center">
+    <div className="text-center">
+      <p className="mb-3 text-[10px] uppercase tracking-[0.3em] text-red-500">
+        Error
+      </p>
 
-            <div className="grid grid-cols-2 gap-x-3 gap-y-10 sm:gap-x-5 md:grid-cols-3 lg:grid-cols-4">
+      <h2 className="text-3xl font-bold uppercase tracking-[-0.05em]">
+        {error}
+      </h2>
+    </div>
+  </div>
+) : filteredProducts.length > 0 ? (
+  <div className="grid grid-cols-2 gap-x-3 gap-y-10 sm:gap-x-5 md:grid-cols-3 lg:grid-cols-4">
+    {filteredProducts.map((product) => (
+      <ProductCard
+        key={product.id}
+        product={product}
+      />
+    ))}
+  </div>
+) : (
+  <div className="flex min-h-[400px] items-center justify-center">
+    <div className="text-center">
+      <p className="mb-3 text-[10px] uppercase tracking-[0.3em] text-black/40">
+        No products
+      </p>
 
-              {filteredProducts.map(
-                (product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                  />
-                )
-              )}
-
-            </div>
-
-          ) : (
-
-            <div className="flex min-h-[400px] items-center justify-center">
-
-              <div className="text-center">
-
-                <p className="mb-3 text-[10px] uppercase tracking-[0.3em] text-black/40">
-                  No products
-                </p>
-
-                <h2 className="text-3xl font-bold uppercase tracking-[-0.05em]">
-                  Nothing here yet.
-                </h2>
-
-              </div>
-
-            </div>
-
-          )}
+      <h2 className="text-3xl font-bold uppercase tracking-[-0.05em]">
+        Nothing here yet.
+      </h2>
+    </div>
+  </div>
+)}
 
         </div>
 

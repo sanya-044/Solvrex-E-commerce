@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { use } from "react";
-import { useMemo, useState } from "react";
+import { useEffect,useState, } from "react";
 import {
   ArrowLeft,
   Heart,
@@ -11,7 +10,7 @@ import {
   MapPin,
 } from "lucide-react";
 import {useRouter} from "next/navigation";
-import { products } from "@/data/products";
+import type { Product } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 
@@ -28,16 +27,123 @@ export default function ProductPage({
      PRODUCT ID
   ======================================== */
 
-  const { id } = use(params);
-  const router = useRouter();
-  const productId = Number(id);
+const router = useRouter();
+  const [relatedProducts, setRelatedProducts] =
+  useState<Product[]>([]);
+const [productId, setProductId] =
+  useState<number | null>(null);
 
+const [product, setProduct] =
+  useState<Product | null>(null);
+
+const [loading, setLoading] =
+  useState(true);
+
+const [error, setError] =
+  useState("");
+
+  useEffect(() => {
+  let cancelled = false;
+
+  const loadProduct = async () => {
+    try {
+      const { id } = await params;
+
+      const numericId = Number(id);
+
+      if (!Number.isInteger(numericId)) {
+        throw new Error(
+          "Invalid product ID."
+        );
+      }
+
+      if (!cancelled) {
+        setProductId(numericId);
+      }
+
+      const response = await fetch(
+        `/api/products/${numericId}`,
+        {
+          cache: "no-store",
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Unable to load product."
+        );
+      }
+
+      if (!cancelled) {
+        setProduct(data);
+      }
+      const productsResponse = await fetch(
+  "/api/products",
+  {
+    cache: "no-store",
+  }
+);
+
+if (productsResponse.ok) {
+  const allProducts =
+    await productsResponse.json();
+
+  if (Array.isArray(allProducts)) {
+    const related = allProducts
+      .filter(
+        (item: Product) =>
+          item.id !== numericId &&
+          item.category === data.category
+      )
+      .slice(0, 4);
+
+    if (!cancelled) {
+      setRelatedProducts(related);
+    }
+  }
+}
+    } catch (error) {
+      console.error(
+        "Product loading error:",
+        error
+      );
+
+      if (!cancelled) {
+        setError(
+          "Unable to load this product."
+        );
+      }
+    } finally {
+      if (!cancelled) {
+        setLoading(false);
+      }
+    }
+    const productsResponse = await fetch(
+  "/api/products",
+  {
+    cache: "no-store",
+  }
+);
+
+
+  };
+
+  loadProduct();
+
+  return () => {
+    cancelled = true;
+  };
+}, [params]);
   /* ========================================
      STATE
   ======================================== */
 
   const [selectedSize, setSelectedSize] =
     useState<string | null>(null);
+
 
   const [quantity, setQuantity] =
     useState(1);
@@ -79,22 +185,18 @@ export default function ProductPage({
     );
 
   /* ========================================
-     FIND PRODUCT
-  ======================================== */
-
-  const product = useMemo(
-    () =>
-      products.find(
-        (item) => item.id === productId
-      ),
-    [productId]
-  );
-
-  /* ========================================
      PRODUCT NOT FOUND
   ======================================== */
-
-  if (!product) {
+if (loading) {
+  return (
+    <main className="flex min-h-[70vh] items-center justify-center bg-[#f7f6f2]">
+      <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-black/40">
+        Loading Product...
+      </p>
+    </main>
+  );
+}
+  if (error || !product) {
     return (
       <main className="flex min-h-[70vh] items-center justify-center bg-[#f7f6f2] px-5">
         <div className="text-center">
@@ -104,8 +206,8 @@ export default function ProductPage({
           </p>
 
           <h1 className="text-4xl font-black uppercase tracking-[-0.06em]">
-            Product Not Found
-          </h1>
+  {error || "Product Not Found"}
+</h1>
 
           <Link
             href="/shop"
@@ -769,7 +871,7 @@ const handleBuyNow = () => {
 
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
 
-      {products
+      {relatedProducts
         .filter(
           (item) =>
             item.id !== product.id &&

@@ -1,7 +1,8 @@
 import Link from "next/link";
 
 import ProductCard from "@/components/ProductCard";
-import { products } from "@/data/products";
+import clientPromise from "@/lib/mongodb";
+import type { Product } from "@/data/products";
 
 type CategoryPageProps = {
   params: Promise<{
@@ -14,8 +15,7 @@ export default async function CategoryPage({
 }: CategoryPageProps) {
   const { slug } = await params;
 
-  const category =
-    slug.toLowerCase();
+  const category = slug.toLowerCase();
 
   const gender =
     category === "men"
@@ -26,12 +26,48 @@ export default async function CategoryPage({
       ? "Unisex"
       : null;
 
-  const categoryProducts = gender
-    ? products.filter(
-        (product) =>
-          product.gender === gender
-      )
-    : [];
+  let categoryProducts: Product[] = [];
+
+  if (gender) {
+    try {
+      const client = await clientPromise;
+
+      const db = client.db("fabrice");
+
+      const products =
+        await db
+          .collection("products")
+          .find({ gender })
+          .sort({ id: 1 })
+          .toArray();
+
+      categoryProducts = products.map(
+        (product) => ({
+          id: product.id,
+          name: product.name,
+          category: product.category,
+          gender: product.gender,
+          price: product.price,
+          originalPrice:
+            product.originalPrice,
+          image: product.image,
+          description:
+            product.description,
+          sizes: product.sizes,
+          ...(product.badge
+            ? {
+                badge: product.badge,
+              }
+            : {}),
+        })
+      );
+    } catch (error) {
+      console.error(
+        "Category products error:",
+        error
+      );
+    }
+  }
 
   const title =
     gender ?? "Category";
@@ -39,9 +75,7 @@ export default async function CategoryPage({
   return (
     <main className="min-h-screen bg-[#f5f3ee] text-[#0a0a0a]">
 
-      {/* =====================================
-          HEADER
-      ===================================== */}
+      {/* HEADER */}
 
       <section className="border-b border-black/10 px-5 pb-12 pt-16 sm:px-8 lg:px-12 lg:pb-16 lg:pt-24">
 
@@ -76,9 +110,7 @@ export default async function CategoryPage({
 
       </section>
 
-      {/* =====================================
-          CATEGORY NAV
-      ===================================== */}
+      {/* CATEGORY NAV */}
 
       <section className="border-b border-black/10 px-5 sm:px-8 lg:px-12">
 
@@ -128,9 +160,7 @@ export default async function CategoryPage({
 
       </section>
 
-      {/* =====================================
-          PRODUCTS
-      ===================================== */}
+      {/* PRODUCTS */}
 
       <section className="px-5 py-12 sm:px-8 lg:px-12 lg:py-16">
 

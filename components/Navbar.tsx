@@ -9,13 +9,13 @@ import {
   ChevronDown,
   UserRound,
 } from "lucide-react";
-import { useState } from "react";
+import { useSyncExternalStore  } from "react";
+import { useState, useEffect  } from "react";
+import type { Product } from "@/data/products";
 import Link from "next/link";
 import {
   useSession,
-  signOut,
 } from "next-auth/react";
-import { products } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 
@@ -27,7 +27,11 @@ export default function Navbar() {
   const totalItems = useCartStore(
     (state) => state.getTotalItems()
   );
-
+const mounted = useSyncExternalStore(
+  () => () => {},
+  () => true,
+  () => false
+);
   const wishlistCount = useWishlistStore(
     (state) => state.items.length
   );
@@ -40,8 +44,38 @@ const [searchOpen, setSearchOpen] =
 
 const [searchQuery, setSearchQuery] =
   useState("");
+  const [products, setProducts] =
+  useState<Product[]>([]);
   const [activeMenu, setActiveMenu] =
     useState<"men" | "women" | null>(null);
+useEffect(() => {
+  const loadProducts = async () => {
+    try {
+      const response = await fetch(
+        "/api/products"
+      );
+
+      if (!response.ok) {
+        throw new Error(
+          "Unable to load products."
+        );
+      }
+
+      const data = await response.json();
+
+      if (Array.isArray(data)) {
+        setProducts(data);
+      }
+    } catch (error) {
+      console.error(
+        "Navbar products error:",
+        error
+      );
+    }
+  };
+
+  loadProducts();
+}, []);
   const searchResults = products.filter(
   (product) => {
     const query =
@@ -513,8 +547,8 @@ const [searchQuery, setSearchQuery] =
               />
 
               <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-black px-1 text-[8px] text-white">
-                {totalItems}
-              </span>
+  {mounted ? totalItems : 0}
+</span>
             </a>
 
           </div>

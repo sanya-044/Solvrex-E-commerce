@@ -1,9 +1,8 @@
 import CategoryCard from "@/components/CategoryCard";
 import Hero from "@/components/Hero";
 import ProductCarousel from "@/components/ProductCarousel";
-
-import { products } from "@/data/products";
-
+import clientPromise from "@/lib/mongodb";
+import type { Product } from "@/data/products";
 const categories = [
   {
     title: "T-Shirts",
@@ -46,8 +45,35 @@ const collections = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const client = await clientPromise;
+
+const db = client.db("fabrice");
+
+const productDocuments =
+  await db
+    .collection("products")
+    .find({})
+    .sort({ id: 1 })
+    .toArray();
+
+const products: Product[] =
+  productDocuments.map((product) => ({
+    id: product.id,
+    name: product.name,
+    category: product.category,
+    gender: product.gender,
+    price: product.price,
+    originalPrice: product.originalPrice,
+    image: product.image,
+    description: product.description,
+    sizes: product.sizes,
+    ...(product.badge
+      ? { badge: product.badge }
+      : {}),
+  }));
   return (
+    
     <main className="min-h-screen bg-[#f5f3ee] text-[#0a0a0a]">
 
       {/* =====================================
