@@ -1,6 +1,8 @@
-import { NextResponse } from "next/server";
+ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { ObjectId } from "mongodb"; // 👈 1. Import ObjectId here
 import clientPromise from "@/lib/mongodb";
+
 type OrderItem = {
   product?: {
     id?: number | string;
@@ -11,6 +13,7 @@ type OrderItem = {
   size?: string;
   quantity?: number | string;
 };
+
 export async function POST(request: Request) {
   try {
     // Verify customer login
@@ -34,24 +37,16 @@ export async function POST(request: Request) {
       total,
       paymentMethod,
     } = body;
-    console.log("ORDER CUSTOMER:", customer);
-console.log("ORDER SHIPPING:", shippingAddress);
+
     // Basic validation
-    if (
-      !Array.isArray(items) ||
-      items.length === 0
-    ) {
+    if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
         { message: "Your cart is empty." },
         { status: 400 }
       );
     }
 
-    if (
-      !customer?.name ||
-      !customer?.email ||
-      !customer?.phone
-    ) {
+    if (!customer?.name || !customer?.email || !customer?.phone) {
       return NextResponse.json(
         { message: "Customer information is incomplete." },
         { status: 400 }
@@ -85,7 +80,8 @@ console.log("ORDER SHIPPING:", shippingAddress);
     const db = client.db("fabrice");
 
     const order = {
-      userId: session.user.id,
+      userId: new ObjectId(session.user.id), // 👈 2. Convert to ObjectId so it matches the query!
+      orderNumber: Math.floor(100000 + Math.random() * 900000).toString(),
 
       items: (items as OrderItem[]).map((item) => ({
         productId: item.product?.id,
@@ -103,36 +99,24 @@ console.log("ORDER SHIPPING:", shippingAddress);
       },
 
       shippingAddress: {
-        address: String(
-          shippingAddress.address
-        ).trim(),
-        city: String(
-          shippingAddress.city
-        ).trim(),
-        state: String(
-          shippingAddress.state
-        ).trim(),
-        pincode: String(
-          shippingAddress.pincode
-        ).trim(),
+        address: String(shippingAddress.address).trim(),
+        city: String(shippingAddress.city).trim(),
+        state: String(shippingAddress.state).trim(),
+        pincode: String(shippingAddress.pincode).trim(),
       },
 
       subtotal: Number(subtotal),
       shipping: Number(shipping),
       total: Number(total),
 
-      paymentMethod:
-        paymentMethod || "COD",
-
+      paymentMethod: paymentMethod || "COD",
       status: "placed",
 
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
-    const result = await db
-      .collection("orders")
-      .insertOne(order);
+    const result = await db.collection("orders").insertOne(order);
 
     return NextResponse.json(
       {
@@ -142,15 +126,11 @@ console.log("ORDER SHIPPING:", shippingAddress);
       { status: 201 }
     );
   } catch (error) {
-    console.error(
-      "Create order error:",
-      error
-    );
+    console.error("Create order error:", error);
 
     return NextResponse.json(
       {
-        message:
-          "Unable to place your order.",
+        message: "Unable to place your order.",
       },
       { status: 500 }
     );
