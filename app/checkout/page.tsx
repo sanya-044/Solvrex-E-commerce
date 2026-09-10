@@ -1,4 +1,4 @@
-"use client";
+ "use client";
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -25,12 +25,34 @@ export default function CheckoutPage() {
     pincode: "",
   });
 
+  const [paymentMethod, setPaymentMethod] = useState<"COD" | "ONLINE">("COD");
   const [orderError, setOrderError] = useState("");
   const [placingOrder, setPlacingOrder] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderId, setOrderId] = useState("");
 
-  // Protect checkout
+  // Helper function to load Razorpay script safely with a Promise
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if (typeof window !== "undefined" && (window as any).Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  // Preload Razorpay script on mount
+  useEffect(() => {
+    loadRazorpayScript();
+  }, []);
+
+  // Protect checkout route
   useEffect(() => {
     if (status === "unauthenticated") {
       router.replace("/login?callbackUrl=/checkout");
@@ -56,14 +78,13 @@ export default function CheckoutPage() {
       return (
         sum +
         Number(item.product?.price || 0) *
-          Number(item.quantity || 0)
+        Number(item.quantity || 0)
       );
     }, 0);
   }, [items]);
 
   const shipping = useMemo(() => {
     if (items.length === 0) return 0;
-
     return subtotal >= 599 ? 0 : 49;
   }, [subtotal, items.length]);
 
@@ -80,7 +101,6 @@ export default function CheckoutPage() {
   const handlePlaceOrder = async () => {
     setOrderError("");
 
-    // Use entered name, otherwise use logged-in user's name
     const customerName =
       form.name.trim() ||
       session?.user?.name?.trim() ||
@@ -126,6 +146,14 @@ export default function CheckoutPage() {
     setPlacingOrder(true);
 
     try {
+      // If payment is online, make sure script is loaded first
+      if (paymentMethod === "ONLINE") {
+        const isLoaded = await loadRazorpayScript();
+        if (!isLoaded || !(window as any).Razorpay) {
+          throw new Error("Razorpay SDK failed to load. Check your internet connection.");
+        }
+      }
+
       const response = await fetch("/api/orders", {
         method: "POST",
         headers: {
@@ -133,26 +161,21 @@ export default function CheckoutPage() {
         },
         body: JSON.stringify({
           items,
-
           customer: {
             name: customerName,
-            email: form.email
-              .trim()
-              .toLowerCase(),
+            email: form.email.trim().toLowerCase(),
             phone: form.phone.trim(),
           },
-
           shippingAddress: {
             address: form.address.trim(),
             city: form.city.trim(),
             state: form.state.trim(),
             pincode: form.pincode.trim(),
           },
-
           subtotal,
           shipping,
           total,
-          paymentMethod: "COD",
+          paymentMethod,
         }),
       });
 
@@ -165,26 +188,76 @@ export default function CheckoutPage() {
         );
       }
 
-      // Save returned MongoDB order ID
-      setOrderId(data.orderId || "");
+      const currentOrderId = data.orderId || "";
 
-      // Show confirmation
+      // If online payment is selected, trigger official Razorpay script modal
+      if (paymentMethod === "ONLINE") {
+        if (!data.razorpayOrderId) {
+          throw new Error("Failed to initialize online payment order.");
+        }
+
+        const options = {
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_YourTestKeyId",
+          amount: Math.round(total * 100),
+          currency: "INR",
+          name: "FABRICE",
+          description: "Order Payment",
+          order_id: data.razorpayOrderId,
+          handler: async function (response: any) {
+            try {
+              const verifyRes = await fetch("/api/verify-payment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  ...response,
+                  orderId: currentOrderId,
+                }),
+              });
+
+              const verifyData = await verifyRes.json();
+              if (!verifyRes.ok || !verifyData.success) {
+                throw new Error(verifyData.message || "Payment verification failed.");
+              }
+
+              setOrderId(currentOrderId);
+              setOrderSuccess(true);
+              clearCart();
+            } catch (verifyErr: any) {
+              setOrderError(verifyErr.message || "Payment verification failed.");
+            } finally {
+              setPlacingOrder(false);
+            }
+          },
+          prefill: {
+            name: customerName,
+            email: form.email.trim(),
+            contact: form.phone.trim(),
+          },
+          theme: { color: "#000000" },
+          modal: {
+            ondismiss: function () {
+              setPlacingOrder(false);
+              setOrderError("Payment cancelled by user.");
+            },
+          },
+        };
+
+        const rzp = new (window as any).Razorpay(options);
+        rzp.open();
+        return; 
+      }
+
+      // COD flow completion
+      setOrderId(currentOrderId);
       setOrderSuccess(true);
-
-      // Clear cart only after successful order creation
       clearCart();
     } catch (error) {
-      console.error(
-        "Unable to place order:",
-        error
-      );
-
+      console.error("Unable to place order:", error);
       setOrderError(
         error instanceof Error
           ? error.message
           : "Unable to place your order."
       );
-    } finally {
       setPlacingOrder(false);
     }
   };
@@ -194,10 +267,7 @@ export default function CheckoutPage() {
     return (
       <main className="min-h-screen bg-[#f7f6f2] px-6 py-20">
         <div className="mx-auto flex max-w-7xl items-center justify-center">
-          <Loader2
-            size={22}
-            className="animate-spin"
-          />
+          <Loader2 size={22} className="animate-spin" />
         </div>
       </main>
     );
@@ -216,7 +286,7 @@ export default function CheckoutPage() {
     );
   }
 
-  // Successful order
+  // Successful order screen
   if (orderSuccess) {
     return (
       <main className="min-h-screen bg-[#f7f6f2]">
@@ -235,9 +305,7 @@ export default function CheckoutPage() {
             </h1>
 
             <p className="mx-auto mt-5 max-w-md text-sm leading-6 text-black/55">
-              Your order has been placed
-              successfully. We&apos;ll process your
-              order and prepare it for delivery.
+              Your order has been placed successfully. We&apos;ll process your order and prepare it for delivery.
             </p>
 
             {orderId && (
@@ -245,7 +313,6 @@ export default function CheckoutPage() {
                 <p className="text-[8px] uppercase tracking-[0.25em] text-black/40">
                   Order ID
                 </p>
-
                 <p className="mt-2 break-all text-sm font-medium">
                   {orderId}
                 </p>
@@ -255,9 +322,7 @@ export default function CheckoutPage() {
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-center">
               <button
                 type="button"
-                onClick={() =>
-                  router.push("/account")
-                }
+                onClick={() => router.push("/account")}
                 className="h-12 bg-black px-8 text-[9px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80"
               >
                 View Account
@@ -265,9 +330,7 @@ export default function CheckoutPage() {
 
               <button
                 type="button"
-                onClick={() =>
-                  router.push("/shop")
-                }
+                onClick={() => router.push("/shop")}
                 className="h-12 border border-black px-8 text-[9px] font-bold uppercase tracking-[0.2em] transition-opacity hover:opacity-60"
               >
                 Continue Shopping
@@ -329,10 +392,7 @@ export default function CheckoutPage() {
                     ""
                   }
                   onChange={(e) =>
-                    updateField(
-                      "name",
-                      e.target.value
-                    )
+                    updateField("name", e.target.value)
                   }
                   className="h-14 border border-black/15 bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-black/30 focus:border-black sm:col-span-2"
                 />
@@ -343,10 +403,7 @@ export default function CheckoutPage() {
                   placeholder="Phone Number"
                   value={form.phone}
                   onChange={(e) =>
-                    updateField(
-                      "phone",
-                      e.target.value
-                    )
+                    updateField("phone", e.target.value)
                   }
                   className="h-14 border border-black/15 bg-transparent px-4 text-sm outline-none placeholder:text-black/30 focus:border-black"
                 />
@@ -357,10 +414,7 @@ export default function CheckoutPage() {
                   placeholder="Email Address"
                   value={form.email}
                   onChange={(e) =>
-                    updateField(
-                      "email",
-                      e.target.value
-                    )
+                    updateField("email", e.target.value)
                   }
                   className="h-14 border border-black/15 bg-transparent px-4 text-sm outline-none placeholder:text-black/30 focus:border-black"
                 />
@@ -384,10 +438,7 @@ export default function CheckoutPage() {
                   placeholder="House / Flat / Street Address"
                   value={form.address}
                   onChange={(e) =>
-                    updateField(
-                      "address",
-                      e.target.value
-                    )
+                    updateField("address", e.target.value)
                   }
                   className="h-14 border border-black/15 bg-transparent px-4 text-sm outline-none placeholder:text-black/30 focus:border-black sm:col-span-2"
                 />
@@ -398,10 +449,7 @@ export default function CheckoutPage() {
                   placeholder="City"
                   value={form.city}
                   onChange={(e) =>
-                    updateField(
-                      "city",
-                      e.target.value
-                    )
+                    updateField("city", e.target.value)
                   }
                   className="h-14 border border-black/15 bg-transparent px-4 text-sm outline-none placeholder:text-black/30 focus:border-black"
                 />
@@ -412,10 +460,7 @@ export default function CheckoutPage() {
                   placeholder="State"
                   value={form.state}
                   onChange={(e) =>
-                    updateField(
-                      "state",
-                      e.target.value
-                    )
+                    updateField("state", e.target.value)
                   }
                   className="h-14 border border-black/15 bg-transparent px-4 text-sm outline-none placeholder:text-black/30 focus:border-black"
                 />
@@ -430,10 +475,7 @@ export default function CheckoutPage() {
                   onChange={(e) =>
                     updateField(
                       "pincode",
-                      e.target.value.replace(
-                        /\D/g,
-                        ""
-                      )
+                      e.target.value.replace(/\D/g, "")
                     )
                   }
                   className="h-14 border border-black/15 bg-transparent px-4 text-sm outline-none placeholder:text-black/30 focus:border-black"
@@ -451,28 +493,71 @@ export default function CheckoutPage() {
                 Payment
               </h2>
 
-              <div className="mt-6 border border-black bg-white p-6">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-black">
-                    <div className="h-2 w-2 rounded-full bg-white" />
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                {/* COD Option */}
+                <div
+                  onClick={() => setPaymentMethod("COD")}
+                  className={`cursor-pointer border bg-white p-6 transition-all ${
+                    paymentMethod === "COD"
+                      ? "border-black"
+                      : "border-black/15"
+                  }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <div
+                      className={`flex h-5 w-5 items-center justify-center rounded-full border ${
+                        paymentMethod === "COD"
+                          ? "border-black bg-black"
+                          : "border-black/30"
+                      }`}
+                    >
+                      {paymentMethod === "COD" && (
+                        <div className="h-2 w-2 rounded-full bg-white" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.2em]">
+                        Cash on Delivery
+                      </p>
+                      <p className="mt-1 text-xs text-black/45">
+                        Pay when your order arrives.
+                      </p>
+                    </div>
                   </div>
+                </div>
 
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em]">
-                      Cash on Delivery
-                    </p>
-
-                    <p className="mt-1 text-xs text-black/45">
-                      Pay when your order arrives.
-                    </p>
+                {/* Online Payment Option */}
+                <div
+                  onClick={() => setPaymentMethod("ONLINE")}
+                  className={`cursor-pointer border bg-white p-6 transition-all ${
+                    paymentMethod === "ONLINE"
+                      ? "border-black"
+                      : "border-black/15"
+                  }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <div
+                      className={`flex h-5 w-5 items-center justify-center rounded-full border ${
+                        paymentMethod === "ONLINE"
+                          ? "border-black bg-black"
+                          : "border-black/30"
+                      }`}
+                    >
+                      {paymentMethod === "ONLINE" && (
+                        <div className="h-2 w-2 rounded-full bg-white" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.2em]">
+                        Pay Online (Razorpay)
+                      </p>
+                      <p className="mt-1 text-xs text-black/45">
+                        UPI, Cards, NetBanking (INR)
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-
-              <p className="mt-4 text-[8px] uppercase tracking-[0.2em] text-black/35">
-                Online payment will be available in
-                the full version.
-              </p>
             </div>
 
             {/* ERROR */}
@@ -493,10 +578,7 @@ export default function CheckoutPage() {
               </h2>
 
               <p className="text-[8px] uppercase tracking-[0.25em] text-black/40">
-                {totalItems}{" "}
-                {totalItems === 1
-                  ? "Item"
-                  : "Items"}
+                {totalItems} {totalItems === 1 ? "Item" : "Items"}
               </p>
             </div>
 
@@ -531,9 +613,7 @@ export default function CheckoutPage() {
                     <p className="mt-auto pt-4 text-sm font-bold">
                       ₹
                       {(
-                        Number(
-                          item.product.price
-                        ) *
+                        Number(item.product.price) *
                         Number(item.quantity)
                       ).toLocaleString("en-IN")}
                     </p>
@@ -545,27 +625,16 @@ export default function CheckoutPage() {
             {/* TOTALS */}
             <div className="border-t border-black/10 p-6">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-black/50">
-                  Subtotal
-                </span>
-
+                <span className="text-xs text-black/50">Subtotal</span>
                 <span className="text-sm">
-                  ₹
-                  {subtotal.toLocaleString(
-                    "en-IN"
-                  )}
+                  ₹{subtotal.toLocaleString("en-IN")}
                 </span>
               </div>
 
               <div className="mt-4 flex items-center justify-between">
-                <span className="text-xs text-black/50">
-                  Shipping
-                </span>
-
+                <span className="text-xs text-black/50">Shipping</span>
                 <span className="text-sm">
-                  {shipping === 0
-                    ? "FREE"
-                    : `₹${shipping}`}
+                  {shipping === 0 ? "FREE" : `₹${shipping}`}
                 </span>
               </div>
 
@@ -575,41 +644,29 @@ export default function CheckoutPage() {
                 <span className="text-[9px] font-bold uppercase tracking-[0.25em]">
                   Total
                 </span>
-
                 <span className="text-3xl font-black tracking-[-0.05em]">
-                  ₹
-                  {total.toLocaleString(
-                    "en-IN"
-                  )}
+                  ₹{total.toLocaleString("en-IN")}
                 </span>
               </div>
 
               <button
                 type="button"
                 onClick={handlePlaceOrder}
-                disabled={
-                  placingOrder ||
-                  items.length === 0
-                }
+                disabled={placingOrder || items.length === 0}
                 className="mt-7 flex h-16 w-full items-center justify-center gap-3 bg-black text-[10px] font-bold uppercase tracking-[0.25em] text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {placingOrder ? (
                   <>
-                    <Loader2
-                      size={15}
-                      className="animate-spin"
-                    />
-                    Placing Order
+                    <Loader2 size={15} className="animate-spin" />
+                    {paymentMethod === "ONLINE" ? "Connecting Gateway..." : "Placing Order"}
                   </>
                 ) : (
-                  "Place Order"
+                  paymentMethod === "ONLINE" ? "Proceed to Payment" : "Place Order"
                 )}
               </button>
 
               <p className="mt-6 text-center text-[8px] leading-4 uppercase tracking-[0.15em] text-black/30">
-                By placing your order, you agree
-                to FABRICE&apos;s terms and
-                conditions.
+                By placing your order, you agree to FABRICE&apos;s terms and conditions.
               </p>
             </div>
           </aside>

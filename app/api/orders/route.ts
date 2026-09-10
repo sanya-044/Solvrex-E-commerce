@@ -1,7 +1,14 @@
  import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { ObjectId } from "mongodb"; // 👈 1. Import ObjectId here
+import { ObjectId } from "mongodb";
 import clientPromise from "@/lib/mongodb";
+import Razorpay from "razorpay";
+
+// Initialize Razorpay with fallback support for both key naming conventions
+const razorpay = new Razorpay({
+  key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID || "",
+  key_secret: process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_SECRET_KEY || "",
+});
 
 type OrderItem = {
   product?: {
@@ -76,11 +83,31 @@ export async function POST(request: Request) {
       );
     }
 
+    // If online payment is selected, create a Razorpay order first
+    let razorpayOrderId = null;
+    if (paymentMethod === "ONLINE") {
+      try {
+        const options = {
+          amount: Math.round(Number(total) * 100), // Amount in paise (e.g. ₹899 = 89900)
+          currency: "INR",
+          receipt: `receipt_${Date.now()}`,
+        };
+        const razorpayOrder = await razorpay.orders.create(options);
+        razorpayOrderId = razorpayOrder.id;
+      } catch (razorpayErr) {
+        console.error("Razorpay order creation failed:", razorpayErr);
+        return NextResponse.json(
+          { message: "Failed to initialize online payment order with Razorpay keys." },
+          { status: 400 }
+        );
+      }
+    }
+
     const client = await clientPromise;
     const db = client.db("fabrice");
 
     const order = {
-      userId: new ObjectId(session.user.id), // 👈 2. Convert to ObjectId so it matches the query!
+      userId: new ObjectId(session.user.id),
       orderNumber: Math.floor(100000 + Math.random() * 900000).toString(),
 
       items: (items as OrderItem[]).map((item) => ({
@@ -110,7 +137,8 @@ export async function POST(request: Request) {
       total: Number(total),
 
       paymentMethod: paymentMethod || "COD",
-      status: "placed",
+      status: paymentMethod === "ONLINE" ? "pending_payment" : "placed",
+      razorpayOrderId: razorpayOrderId || null,
 
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -120,8 +148,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        message: "Order placed successfully.",
+        message: "Order initialized successfully.",
         orderId: result.insertedId.toString(),
+        razorpayOrderId,
       },
       { status: 201 }
     );

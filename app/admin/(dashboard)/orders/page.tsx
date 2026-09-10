@@ -1,4 +1,4 @@
-import clientPromise from "@/lib/mongodb";
+ import clientPromise from "@/lib/mongodb";
 
 export default async function AdminOrdersPage() {
   const client = await clientPromise;
@@ -81,23 +81,22 @@ export default async function AdminOrdersPage() {
 
               <tbody>
                 {orders.map((order) => {
-                  const orderItems = Array.isArray(
-                    order.items
-                  )
+                  const orderItems = Array.isArray(order.items)
                     ? order.items
                     : [];
 
                   const itemCount = orderItems.reduce(
                     (
                       total: number,
-                      item: {
-                        quantity?: number;
-                      }
-                    ) =>
-                      total +
-                      Number(item.quantity || 0),
+                      item: { quantity?: number }
+                    ) => total + Number(item.quantity || 0),
                     0
                   );
+
+                  // Hardcoded rule: if payment method is ONLINE, show PAID. Otherwise pending.
+                  const paymentMethod = (order.paymentMethod || "").toUpperCase();
+                  const statusText = paymentMethod === "ONLINE" ? "PAID" : "PENDING";
+                  const isPaid = statusText === "PAID";
 
                   return (
                     <tr
@@ -115,18 +114,15 @@ export default async function AdminOrdersPage() {
                       <td className="px-5 py-5">
                         <div>
                           <p className="text-[10px] font-bold uppercase">
-                            {order.customer?.name ||
-                              "—"}
+                            {order.customer?.name || "—"}
                           </p>
 
                           <p className="mt-1 text-[9px] text-black/45">
-                            {order.customer?.email ||
-                              "—"}
+                            {order.customer?.email || "—"}
                           </p>
 
                           <p className="mt-1 text-[9px] text-black/45">
-                            {order.customer?.phone ||
-                              "—"}
+                            {order.customer?.phone || "—"}
                           </p>
                         </div>
                       </td>
@@ -158,9 +154,7 @@ export default async function AdminOrdersPage() {
 
                           <p className="mt-1 text-[8px] uppercase tracking-[0.15em] text-black/35">
                             {itemCount}{" "}
-                            {itemCount === 1
-                              ? "item"
-                              : "items"}
+                            {itemCount === 1 ? "item" : "items"}
                           </p>
                         </div>
                       </td>
@@ -169,24 +163,29 @@ export default async function AdminOrdersPage() {
                       <td className="px-5 py-5">
                         <p className="text-sm font-bold">
                           ₹
-                          {Number(
-                            order.total || 0
-                          ).toLocaleString("en-IN")}
+                          {Number(order.total || 0).toLocaleString(
+                            "en-IN"
+                          )}
                         </p>
                       </td>
 
                       {/* PAYMENT */}
                       <td className="px-5 py-5">
                         <p className="text-[8px] font-bold uppercase tracking-[0.15em]">
-                          {order.paymentMethod ||
-                            "COD"}
+                          {order.paymentMethod || "COD"}
                         </p>
                       </td>
 
                       {/* STATUS */}
                       <td className="px-5 py-5">
-                        <span className="inline-flex border border-black/15 px-3 py-2 text-[8px] font-bold uppercase tracking-[0.15em]">
-                          {order.status || "placed"}
+                        <span
+                          className={`inline-flex border px-3 py-2 text-[8px] font-bold uppercase tracking-[0.15em] ${
+                            isPaid
+                              ? "border-green-600 bg-green-50 text-green-800"
+                              : "border-amber-500 bg-amber-50 text-amber-800"
+                          }`}
+                        >
+                          {statusText}
                         </span>
                       </td>
 
@@ -196,14 +195,11 @@ export default async function AdminOrdersPage() {
                           {order.createdAt
                             ? new Date(
                                 order.createdAt
-                              ).toLocaleDateString(
-                                "en-IN",
-                                {
-                                  day: "2-digit",
-                                  month: "short",
-                                  year: "numeric",
-                                }
-                              )
+                              ).toLocaleDateString("en-IN", {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                              })
                             : "—"}
                         </p>
 
@@ -211,13 +207,10 @@ export default async function AdminOrdersPage() {
                           {order.createdAt
                             ? new Date(
                                 order.createdAt
-                              ).toLocaleTimeString(
-                                "en-IN",
-                                {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                }
-                              )
+                              ).toLocaleTimeString("en-IN", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })
                             : ""}
                         </p>
                       </td>
