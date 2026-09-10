@@ -47,15 +47,45 @@ export default function LoginPage() {
     await signIn("google", { callbackUrl: "/" });
   };
 
-  const handleForgotPasswordSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setForgotLoading(true);
-    
-    setTimeout(() => {
-      setForgotLoading(false);
-      setForgotSubmitted(true);
-    }, 1000);
-  };
+  const handleForgotPasswordSubmit = async (
+  e: React.FormEvent
+) => {
+  e.preventDefault();
+
+  setForgotLoading(true);
+
+  try {
+    const response = await fetch("/api/auth/forgot-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: forgotEmail,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.message || "Unable to send reset link."
+      );
+    }
+
+    setForgotSubmitted(true);
+  } catch (error) {
+    console.error(error);
+
+    alert(
+      error instanceof Error
+        ? error.message
+        : "Unable to send reset link."
+    );
+  } finally {
+    setForgotLoading(false);
+  }
+};
 
   return (
     <main className="min-h-[calc(100vh-144px)] bg-[#f5f3ee] px-5 py-16 sm:px-8 lg:px-12">
