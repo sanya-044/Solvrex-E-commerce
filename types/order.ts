@@ -1,3 +1,4 @@
+import type { ObjectId } from "mongodb";
 export type OrderStatus =
   | "pending"
   | "processing"
@@ -54,9 +55,9 @@ export interface Order {
 
 // Shape as stored in MongoDB (raw _id / ObjectId refs, Date objects).
 export interface OrderDocument {
-  _id: unknown;
+  _id: ObjectId;
   orderNumber: string;
-  userId: unknown;
+  userId: ObjectId;
   items: OrderItem[];
   subtotal: number;
   shipping: number;

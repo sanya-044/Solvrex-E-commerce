@@ -1,4 +1,35 @@
-export default function AdminDashboard() {
+import clientPromise from "@/lib/mongodb";
+
+export default async function AdminDashboard() {
+  const client = await clientPromise;
+  const db = client.db("fabrice");
+
+  const [productsCount, ordersCount, customersCount, revenueResult] =
+    await Promise.all([
+      db.collection("products").countDocuments(),
+      db.collection("orders").countDocuments(),
+      db.collection("users").countDocuments(),
+      db.collection("orders").aggregate([
+        {
+          $group: {
+            _id: null,
+            totalRevenue: {
+              $sum: {
+                $convert: {
+                  input: "$total",
+                  to: "double",
+                  onError: 0,
+                  onNull: 0,
+                },
+              },
+            },
+          },
+        },
+      ]).toArray(),
+    ]);
+
+  const revenue = revenueResult[0]?.totalRevenue ?? 0;
+
   return (
     <div className="p-8 lg:p-12">
       <div className="border-b border-black/10 pb-10">
@@ -22,7 +53,7 @@ export default function AdminDashboard() {
           </p>
 
           <p className="mt-5 text-4xl font-black">
-            0
+            {productsCount}
           </p>
         </div>
 
@@ -32,7 +63,7 @@ export default function AdminDashboard() {
           </p>
 
           <p className="mt-5 text-4xl font-black">
-            0
+            {ordersCount}
           </p>
         </div>
 
@@ -42,7 +73,7 @@ export default function AdminDashboard() {
           </p>
 
           <p className="mt-5 text-4xl font-black">
-            0
+            {customersCount}
           </p>
         </div>
 
@@ -52,7 +83,7 @@ export default function AdminDashboard() {
           </p>
 
           <p className="mt-5 text-4xl font-black">
-            ₹0
+            ₹{revenue.toLocaleString("en-IN")}
           </p>
         </div>
       </div>
@@ -67,8 +98,8 @@ export default function AdminDashboard() {
         </h2>
 
         <p className="mt-3 max-w-xl text-sm leading-6 text-black/50">
-          Products, orders, customers and inventory
-          management will be available from the navigation.
+          Products, orders, customers and inventory management
+          are available from the navigation.
         </p>
       </section>
     </div>
