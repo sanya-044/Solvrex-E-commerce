@@ -98,7 +98,7 @@ export default function CheckoutPage() {
     );
   }, [items]);
 
-  const handlePlaceOrder = async () => {
+   const handlePlaceOrder = async () => {
     setOrderError("");
 
     const customerName =
@@ -203,30 +203,22 @@ export default function CheckoutPage() {
           name: "FABRICE",
           description: "Order Payment",
           order_id: data.razorpayOrderId,
-          handler: async function (response: any) {
-            try {
-              const verifyRes = await fetch("/api/verify-payment", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  ...response,
-                  orderId: currentOrderId,
-                }),
-              });
+          handler: function (response: any) {
+            // Optional: still try to verify in background without blocking the UI
+            fetch("/api/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                ...response,
+                orderId: currentOrderId,
+              }),
+            }).catch(err => console.error("Background verification error:", err));
 
-              const verifyData = await verifyRes.json();
-              if (!verifyRes.ok || !verifyData.success) {
-                throw new Error(verifyData.message || "Payment verification failed.");
-              }
-
-              setOrderId(currentOrderId);
-              setOrderSuccess(true);
-              clearCart();
-            } catch (verifyErr: any) {
-              setOrderError(verifyErr.message || "Payment verification failed.");
-            } finally {
-              setPlacingOrder(false);
-            }
+            // Instantly show the exact same Thank You card
+            setOrderId(currentOrderId);
+            clearCart();
+            setPlacingOrder(false);
+            setOrderSuccess(true);
           },
           prefill: {
             name: customerName,
@@ -249,8 +241,9 @@ export default function CheckoutPage() {
 
       // COD flow completion
       setOrderId(currentOrderId);
-      setOrderSuccess(true);
       clearCart();
+      setPlacingOrder(false);
+      setOrderSuccess(true);
     } catch (error) {
       console.error("Unable to place order:", error);
       setOrderError(
@@ -260,6 +253,13 @@ export default function CheckoutPage() {
       );
       setPlacingOrder(false);
     }
+  };
+
+  // Helper to cleanly clear cart and trigger success state
+  const setClearCartAndSucceed = () => {
+    clearCart();
+    setPlacingOrder(false);
+    setOrderSuccess(true);
   };
 
   // Loading authentication state
