@@ -1,61 +1,66 @@
-import { create } from "zustand";
+ import { create } from "zustand";
 import { persist } from "zustand/middleware";
-
 import type { Product } from "@/data/products";
 
 type WishlistStore = {
   items: Product[];
-
+  setItems: (items: Product[]) => void;
   toggleWishlist: (product: Product) => void;
   isWishlisted: (productId: number) => boolean;
   removeFromWishlist: (productId: number) => void;
   clearWishlist: () => void;
 };
 
-export const useWishlistStore =
-  create<WishlistStore>()(
-    persist(
-      (set, get) => ({
-        items: [],
+const syncWishlistToBackend = (items: Product[]) => {
+  fetch("/api/user/wishlist", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ items }),
+  }).catch(() => {});
+};
 
-        toggleWishlist: (product) => {
-          const exists = get().items.some(
-            (item) => item.id === product.id
-          );
+export const useWishlistStore = create<WishlistStore>()(
+  persist(
+    (set, get) => ({
+      items: [],
+
+      setItems: (items) => set({ items }),
+
+      toggleWishlist: (product) => {
+        set((state) => {
+          const exists = state.items.some((item) => item.id === product.id);
+          let updatedItems;
 
           if (exists) {
-            set((state) => ({
-              items: state.items.filter(
-                (item) => item.id !== product.id
-              ),
-            }));
+            updatedItems = state.items.filter((item) => item.id !== product.id);
           } else {
-            set((state) => ({
-              items: [...state.items, product],
-            }));
+            updatedItems = [...state.items, product];
           }
-        },
 
-        isWishlisted: (productId) => {
-          return get().items.some(
-            (item) => item.id === productId
-          );
-        },
+          syncWishlistToBackend(updatedItems);
+          return { items: updatedItems };
+        });
+      },
 
-        removeFromWishlist: (productId) => {
-          set((state) => ({
-            items: state.items.filter(
-              (item) => item.id !== productId
-            ),
-          }));
-        },
+      isWishlisted: (productId) => {
+        return get().items.some((item) => item.id === productId);
+      },
 
-        clearWishlist: () => {
-          set({ items: [] });
-        },
-      }),
-      {
-        name: "fabrice-wishlist",
-      }
-    )
-  );
+      removeFromWishlist: (productId) => {
+        set((state) => {
+          const updatedItems = state.items.filter((item) => item.id !== productId);
+          syncWishlistToBackend(updatedItems);
+          return { items: updatedItems };
+        });
+      },
+
+      clearWishlist: () => {
+        set({ items: [] });
+        syncWishlistToBackend([]);
+      },
+    }),
+    {
+      name: "fabrice-wishlist",
+    }
+  )
+);
