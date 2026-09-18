@@ -32,7 +32,7 @@ const router = useRouter();
   useState<Product[]>([]);
 const [productId, setProductId] =
   useState<number | null>(null);
-
+const [showSizeGuide, setShowSizeGuide] = useState(false);
 const [product, setProduct] =
   useState<Product | null>(null);
 
@@ -202,7 +202,7 @@ if (loading) {
         <div className="text-center">
 
           <p className="mb-3 text-[10px] uppercase tracking-[0.3em] text-black/40">
-            FABRICE
+            VELMORI
           </p>
 
           <h1 className="text-4xl font-black uppercase tracking-[-0.06em]">
@@ -434,7 +434,8 @@ const handleBuyNow = () => {
 
                 <button
                   type="button"
-                  className="text-[9px] uppercase tracking-[0.15em] underline underline-offset-4"
+                  onClick={() => setShowSizeGuide(true)}
+                  className="mt-3 text-sm underline underline-offset-4"
                 >
                   Size Guide
                 </button>
@@ -668,7 +669,7 @@ const handleBuyNow = () => {
                 <div className="border-b border-black/10 pb-5 pt-4 text-sm leading-6 text-black/55">
 
                   <p>
-                    Designed by FABRICE for
+                    Designed by VELMORI for
                     everyday wear. Built around
                     a relaxed contemporary
                     silhouette with carefully
@@ -852,7 +853,7 @@ const handleBuyNow = () => {
 
       <div>
         <p className="mb-3 text-[9px] uppercase tracking-[0.3em] text-black/40">
-          FABRICE / DISCOVER
+          VELMORI / DISCOVER
         </p>
 
         <h2 className="text-3xl font-black uppercase tracking-[-0.06em] sm:text-4xl">
@@ -914,7 +915,79 @@ const handleBuyNow = () => {
         ))}
 
     </div>
+        {showSizeGuide && (
+  <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
+    <div className="relative w-full max-w-2xl bg-white p-6 text-black">
+      
+      <button
+        type="button"
+        onClick={() => setShowSizeGuide(false)}
+        className="absolute right-4 top-4 text-xl"
+        aria-label="Close size guide"
+      >
+        ×
+      </button>
 
+      <h2 className="mb-6 text-xl font-medium">
+        Size Guide
+      </h2>
+
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse text-sm">
+          <thead>
+            <tr className="border-b">
+              <th className="p-3 text-left">Size</th>
+              <th className="p-3 text-left">Chest</th>
+              <th className="p-3 text-left">Waist</th>
+              <th className="p-3 text-left">Hip</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr className="border-b">
+              <td className="p-3">S</td>
+              <td className="p-3">36&quot;</td>
+              <td className="p-3">30&quot;</td>
+              <td className="p-3">36&quot;</td>
+            </tr>
+
+            <tr className="border-b">
+              <td className="p-3">M</td>
+              <td className="p-3">38&quot;</td>
+              <td className="p-3">32&quot;</td>
+              <td className="p-3">38&quot;</td>
+            </tr>
+
+            <tr className="border-b">
+              <td className="p-3">L</td>
+              <td className="p-3">40&quot;</td>
+              <td className="p-3">34&quot;</td>
+              <td className="p-3">40&quot;</td>
+            </tr>
+
+            <tr className="border-b">
+              <td className="p-3">XL</td>
+              <td className="p-3">42&quot;</td>
+              <td className="p-3">36&quot;</td>
+              <td className="p-3">42&quot;</td>
+            </tr>
+
+            <tr>
+              <td className="p-3">XXL</td>
+              <td className="p-3">44&quot;</td>
+              <td className="p-3">38&quot;</td>
+              <td className="p-3">44&quot;</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p className="mt-5 text-xs text-gray-500">
+        Measurements are approximate and may vary slightly by product.
+      </p>
+    </div>
+  </div>
+)}
   </div>
 
 </section>
