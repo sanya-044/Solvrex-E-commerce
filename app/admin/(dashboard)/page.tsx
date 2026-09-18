@@ -2,7 +2,7 @@ import clientPromise from "@/lib/mongodb";
 
 export default async function AdminDashboard() {
   const client = await clientPromise;
-  const db = client.db("fabrice");
+  const db = client.db("VELMORI");
 
   const [productsCount, ordersCount, customersCount, revenueResult] =
     await Promise.all([
@@ -42,7 +42,7 @@ export default async function AdminDashboard() {
         </h1>
 
         <p className="mt-4 text-sm text-black/45">
-          Manage your FABRICE store.
+          Manage your VELMORI store.
         </p>
       </div>
 
@@ -94,7 +94,7 @@ export default async function AdminDashboard() {
         </p>
 
         <h2 className="mt-4 text-2xl font-black tracking-[-0.03em]">
-          Welcome to FABRICE Administration
+          Welcome to VELMORI Administration
         </h2>
 
         <p className="mt-3 max-w-xl text-sm leading-6 text-black/50">

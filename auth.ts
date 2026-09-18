@@ -45,7 +45,7 @@ export const {
           // Connect to MongoDB
           const client = await clientPromise;
 
-          const db = client.db("fabrice");
+          const db = client.db("VELMORI");
 
           const users = db.collection("users");
 

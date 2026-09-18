@@ -22,7 +22,7 @@ export default async function AdminLayout({
           href="/admin"
           className="text-2xl font-black tracking-[-0.05em]"
         >
-          FABRICE
+          VELMORI
         </Link>
 
         <div className="flex items-center gap-6">

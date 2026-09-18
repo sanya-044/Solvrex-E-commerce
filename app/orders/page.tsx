@@ -6,7 +6,7 @@ import { getOrdersByUserId } from "@/lib/orders";
 import OrderStatusBadge from "@/components/OrderStatusBadge";
 
 export const metadata = {
-  title: "Your Orders / FABRICE",
+  title: "Your Orders / VELMORI",
 };
 
 export default async function OrdersPage() {
@@ -22,7 +22,7 @@ export default async function OrdersPage() {
     <main className="min-h-[70vh] bg-[#f5f3ee] px-5 py-16 text-[#0a0a0a] sm:px-8">
       <div className="mx-auto w-full max-w-3xl">
         <p className="text-[10px] uppercase tracking-[0.3em] text-black/40">
-          FABRICE / ACCOUNT
+          VELMORI / ACCOUNT
         </p>
 
         <h1 className="mt-4 text-5xl font-black uppercase leading-[0.85] tracking-[-0.06em] sm:text-6xl">

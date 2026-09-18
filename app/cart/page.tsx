@@ -48,7 +48,7 @@ export default function CartPage() {
           <div className="text-center">
 
             <p className="mb-4 text-[10px] uppercase tracking-[0.3em] text-black/40">
-              FABRICE / BAG
+              VELMORI / BAG
             </p>
 
             <h1 className="text-5xl font-black uppercase tracking-[-0.07em] sm:text-7xl">
@@ -91,7 +91,7 @@ export default function CartPage() {
         <div className="mx-auto max-w-[1600px]">
 
           <p className="mb-4 text-[10px] uppercase tracking-[0.3em] text-black/40">
-            FABRICE / BAG
+            VELMORI / BAG
           </p>
 
           <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">

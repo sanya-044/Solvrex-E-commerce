@@ -17,7 +17,7 @@ export default async function AccountPage() {
         {/* HEADER */}
         <div className="border-b border-black/10 pb-10">
           <p className="mb-4 text-[9px] font-bold uppercase tracking-[0.3em] text-black/40">
-            Your FABRICE Account
+            Your VELMORI Account
           </p>
           <h1 className="text-5xl font-black tracking-[-0.06em] sm:text-6xl">
             ACCOUNT
@@ -37,7 +37,7 @@ export default async function AccountPage() {
                   Name
                 </p>
                 <p className="text-lg">
-                  {session.user.name || "FABRICE Customer"}
+                  {session.user.name || "VELMORI Customer"}
                 </p>
               </div>
 

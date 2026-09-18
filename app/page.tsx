@@ -48,7 +48,7 @@ const collections = [
 export default async function Home() {
   const client = await clientPromise;
 
-const db = client.db("fabrice");
+const db = client.db("VELMORI");
 
 const productDocuments =
   await db
@@ -97,7 +97,7 @@ const products: Product[] =
       <div className="flex items-start">
 
         <p className="text-[9px] font-medium uppercase tracking-[0.3em] text-black/40">
-          FABRICE / EST. 2026
+          VELMORI / EST. 2026
         </p>
 
       </div>
@@ -115,7 +115,7 @@ const products: Product[] =
         <div className="mt-8 flex flex-col justify-between gap-6 border-t border-black/10 pt-6 sm:flex-row sm:items-start">
 
           <p className="max-w-xl text-sm leading-6 text-black/50">
-            FABRICE creates contemporary everyday
+            VELMORI creates contemporary everyday
             clothing built around clean silhouettes,
             considered details and effortless styling.
           </p>
@@ -124,7 +124,7 @@ const products: Product[] =
             href="/shop"
             className="shrink-0 text-[9px] font-bold uppercase tracking-[0.2em] underline underline-offset-4 transition-opacity hover:opacity-50"
           >
-            Discover FABRICE →
+            Discover VELMORI →
           </a>
 
         </div>
@@ -252,7 +252,7 @@ const products: Product[] =
           <div className="mb-12">
 
             <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.3em] text-black/40">
-              FABRICE / EDITORIAL
+              VELMORI / EDITORIAL
             </p>
 
             <h2 className="text-4xl font-bold uppercase tracking-[-0.06em] sm:text-5xl lg:text-7xl">
@@ -328,7 +328,7 @@ const products: Product[] =
         <div className="mx-auto max-w-[1600px] text-center">
 
           <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-black/40">
-            The FABRICE philosophy
+            The VELMORI philosophy
           </p>
 
           <h2 className="mx-auto mt-8 max-w-6xl text-4xl font-black uppercase leading-[0.9] tracking-[-0.07em] sm:text-6xl lg:text-8xl">
@@ -346,7 +346,7 @@ const products: Product[] =
             href="/shop"
             className="mt-10 inline-flex border border-black px-7 py-4 text-[9px] font-bold uppercase tracking-[0.2em] transition-colors hover:bg-black hover:text-white"
           >
-            Explore FABRICE
+            Explore VELMORI
           </a>
 
         </div>
@@ -371,7 +371,7 @@ const products: Product[] =
 
           <p className="mx-auto mt-5 max-w-md text-sm leading-6 text-white/45">
             New collections, exclusive releases and
-            everything FABRICE — delivered occasionally.
+            everything VELMORI — delivered occasionally.
           </p>
 
           <div className="mx-auto mt-10 flex max-w-xl flex-col gap-2 sm:flex-row">

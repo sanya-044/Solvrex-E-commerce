@@ -90,7 +90,7 @@ export async function PUT(
 
     // 6. Connect to MongoDB
     const client = await clientPromise;
-    const db = client.db("fabrice");
+    const db = client.db("VELMORI");
 
     const products =
       db.collection("products");
@@ -213,7 +213,7 @@ export async function DELETE(
 
     // 3. Connect to MongoDB
     const client = await clientPromise;
-    const db = client.db("fabrice");
+    const db = client.db("VELMORI");
 
     const products =
       db.collection("products");

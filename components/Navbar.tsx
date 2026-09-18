@@ -451,7 +451,7 @@ useEffect(() => {
             href="/"
             className="absolute left-1/2 -translate-x-1/2 text-[25px] font-black tracking-[-0.07em] sm:text-[29px]"
           >
-            FABRICE
+            VELMORI
           </Link>
 
           {/* =================================
@@ -678,7 +678,7 @@ useEffect(() => {
                       href="/shop"
                       className="text-sm hover:opacity-50"
                     >
-                      FABRICE Essentials
+                      VELMORI Essentials
                     </a>
 
                   </div>
@@ -820,7 +820,7 @@ useEffect(() => {
                       href="/shop"
                       className="text-sm hover:opacity-50"
                     >
-                      FABRICE Essentials
+                      VELMORI Essentials
                     </a>
 
                   </div>

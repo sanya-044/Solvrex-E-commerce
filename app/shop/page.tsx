@@ -123,7 +123,7 @@ useEffect(() => {
         <div className="mx-auto max-w-[1600px]">
 
           <p className="mb-4 text-[10px] uppercase tracking-[0.3em] text-black/45">
-            Fabrice / Shop
+            VELMORI / Shop
           </p>
 
           <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">

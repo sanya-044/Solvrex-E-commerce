@@ -138,7 +138,7 @@ export default function NewProductPage() {
         </h1>
 
         <p className="mt-4 text-sm text-black/45">
-          Add a new product to the FABRICE catalog.
+          Add a new product to the VELMORI catalog.
         </p>
       </div>
 

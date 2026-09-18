@@ -202,7 +202,7 @@ if (loading) {
         <div className="text-center">
 
           <p className="mb-3 text-[10px] uppercase tracking-[0.3em] text-black/40">
-            FABRICE
+            VELMORI
           </p>
 
           <h1 className="text-4xl font-black uppercase tracking-[-0.06em]">
@@ -668,7 +668,7 @@ const handleBuyNow = () => {
                 <div className="border-b border-black/10 pb-5 pt-4 text-sm leading-6 text-black/55">
 
                   <p>
-                    Designed by FABRICE for
+                    Designed by VELMORI for
                     everyday wear. Built around
                     a relaxed contemporary
                     silhouette with carefully
@@ -852,7 +852,7 @@ const handleBuyNow = () => {
 
       <div>
         <p className="mb-3 text-[9px] uppercase tracking-[0.3em] text-black/40">
-          FABRICE / DISCOVER
+          VELMORI / DISCOVER
         </p>
 
         <h2 className="text-3xl font-black uppercase tracking-[-0.06em] sm:text-4xl">
