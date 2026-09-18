@@ -47,6 +47,7 @@ export const {
 
         try {
           const client = await clientPromise;
+
           const db = client.db("VELMORI");
 
           const users = db.collection("users");

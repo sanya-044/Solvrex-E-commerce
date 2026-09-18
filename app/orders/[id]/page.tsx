@@ -7,7 +7,7 @@ import OrderStatusBadge from "@/components/OrderStatusBadge";
 import OrderStatusTimeline from "@/components/OrderStatusTimeline";
 
 export const metadata = {
-  title: "Order Details / FABRICE",
+  title: "Order Details / VELMORI",
 };
 
 export default async function OrderDetailPage({
@@ -41,7 +41,7 @@ export default async function OrderDetailPage({
         <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="text-[10px] uppercase tracking-[0.3em] text-black/40">
-              FABRICE / ORDER #{order.orderNumber}
+              VELMORI / ORDER #{order.orderNumber}
             </p>
             <h1 className="mt-4 text-4xl font-black uppercase leading-[0.9] tracking-[-0.05em] sm:text-5xl">
               Order Status

@@ -27,7 +27,7 @@ export default function WishlistPage() {
           />
 
           <p className="mb-4 text-[10px] uppercase tracking-[0.3em] text-black/40">
-            FABRICE / WISHLIST
+            VELMORI / WISHLIST
           </p>
 
           <h1 className="text-5xl font-black uppercase tracking-[-0.07em]">
@@ -59,7 +59,7 @@ export default function WishlistPage() {
         <div className="mx-auto max-w-[1600px]">
 
           <p className="mb-4 text-[10px] uppercase tracking-[0.3em] text-black/40">
-            FABRICE / WISHLIST
+            VELMORI / WISHLIST
           </p>
 
           <div className="flex items-end justify-between gap-5">

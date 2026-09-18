@@ -8,7 +8,7 @@ export default function OrderSuccessPage() {
       <div className="w-full max-w-2xl text-center">
 
         <p className="text-[10px] uppercase tracking-[0.3em] text-black/40">
-          FABRICE / ORDER CONFIRMED
+          VELMORI / ORDER CONFIRMED
         </p>
 
         <h1 className="mt-6 text-6xl font-black uppercase leading-[0.85] tracking-[-0.07em] sm:text-7xl lg:text-8xl">

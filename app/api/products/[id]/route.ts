@@ -24,7 +24,7 @@ export async function GET(
     }
 
     const client = await clientPromise;
-    const db = client.db("fabrice");
+    const db = client.db("VELMORI");
 
     const product = await db
       .collection("products")

@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     const normalizedEmail = email.trim().toLowerCase();
 
     const client = await clientPromise;
-    const db = client.db("fabrice");
+    const db = client.db("VELMORI");
 
     const user = await db.collection("users").findOne({
       email: normalizedEmail,
@@ -66,15 +66,15 @@ export async function POST(request: Request) {
     const resetUrl = `${appUrl}/reset-password?token=${rawToken}`;
 
     const { error } = await resend.emails.send({
-      from: "FABRICE <onboarding@resend.dev>",
+      from: "VELMORI <onboarding@resend.dev>",
       to: [normalizedEmail],
-      subject: "Reset your FABRICE password",
+      subject: "Reset your VELMORI password",
       html: `
         <div style="font-family: Arial, sans-serif; background:#f5f3ee; padding:40px 20px;">
           <div style="max-width:560px; margin:0 auto; background:#ffffff; padding:40px;">
             
             <h1 style="font-size:28px; margin:0 0 10px; letter-spacing:-1px;">
-              FABRICE
+              VELMORI
             </h1>
 
             <p style="color:#666; font-size:13px; margin-bottom:30px;">
@@ -86,7 +86,7 @@ export async function POST(request: Request) {
             </h2>
 
             <p style="font-size:14px; line-height:1.7; color:#444;">
-              We received a request to reset the password for your FABRICE
+              We received a request to reset the password for your VELMORI
               account.
             </p>
 

@@ -53,13 +53,13 @@ export default function SignupPage() {
         {/* HEADER */}
         <div className="mb-12 text-center">
           <p className="mb-4 text-[9px] font-bold uppercase tracking-[0.3em] text-black/40">
-            Join FABRICE
+            Join VELMORI
           </p>
           <h1 className="text-5xl font-black tracking-[-0.06em] sm:text-6xl">
             CREATE ACCOUNT
           </h1>
           <p className="mx-auto mt-5 max-w-[380px] text-sm leading-6 text-black/50">
-            Create your FABRICE account and make every shopping experience yours.
+            Create your VELMORI account and make every shopping experience yours.
           </p>
         </div>
 

@@ -111,7 +111,7 @@ const handleDelete = async (
           </h1>
 
           <p className="mt-4 text-sm text-black/45">
-            Manage the FABRICE product catalog.
+            Manage the VELMORI product catalog.
           </p>
         </div>
 

@@ -88,7 +88,7 @@ export default function ResetPasswordPage() {
 
         <div className="mb-12 text-center">
           <p className="mb-4 text-[9px] font-bold uppercase tracking-[0.3em] text-black/40">
-            FABRICE / ACCOUNT
+            VELMORI / ACCOUNT
           </p>
 
           <h1 className="text-5xl font-black tracking-[-0.06em] sm:text-6xl">
@@ -96,7 +96,7 @@ export default function ResetPasswordPage() {
           </h1>
 
           <p className="mx-auto mt-5 max-w-[360px] text-sm leading-6 text-black/50">
-            Create a new password for your FABRICE account.
+            Create a new password for your VELMORI account.
           </p>
         </div>
 

@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const client = await clientPromise;
 
-    const db = client.db("fabrice");
+    const db = client.db("VELMORI");
 
     const products = await db
       .collection("products")

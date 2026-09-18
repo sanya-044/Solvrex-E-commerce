@@ -61,7 +61,7 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-[460px]">
         <div className="mb-12 text-center">
           <p className="mb-5 text-[10px] font-bold uppercase tracking-[0.3em] text-black/40">
-            FABRICE
+            VELMORI
           </p>
 
           <h1 className="text-5xl font-black tracking-[-0.06em]">

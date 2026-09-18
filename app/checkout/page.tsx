@@ -200,7 +200,7 @@ export default function CheckoutPage() {
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_YourTestKeyId",
           amount: Math.round(total * 100),
           currency: "INR",
-          name: "FABRICE",
+          name: "VELMORI",
           description: "Order Payment",
           order_id: data.razorpayOrderId,
           handler: function (response: any) {
@@ -666,7 +666,7 @@ export default function CheckoutPage() {
               </button>
 
               <p className="mt-6 text-center text-[8px] leading-4 uppercase tracking-[0.15em] text-black/30">
-                By placing your order, you agree to FABRICE&apos;s terms and conditions.
+                By placing your order, you agree to VELMORI&apos;s terms and conditions.
               </p>
             </div>
           </aside>

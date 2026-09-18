@@ -14,7 +14,7 @@ const values = [
   {
     number: "03",
     title: "Yours",
-    text: "FABRICE is a canvas for your style. Wear it your way, make it your own.",
+    text: "VELMORI is a canvas for your style. Wear it your way, make it your own.",
   },
 ];
 
@@ -31,7 +31,7 @@ export default function AboutPage() {
         <div className="mx-auto max-w-[1600px]">
 
           <p className="mb-6 text-[10px] uppercase tracking-[0.3em] text-black/40">
-            FABRICE / ABOUT
+            VELMORI / ABOUT
           </p>
 
           <h1 className="max-w-[1200px] text-6xl font-black uppercase leading-[0.82] tracking-[-0.08em] sm:text-7xl lg:text-[10rem]">
@@ -59,7 +59,7 @@ export default function AboutPage() {
           <div className="max-w-[1000px]">
 
             <p className="text-3xl font-medium leading-[1.05] tracking-[-0.04em] sm:text-4xl lg:text-6xl">
-              FABRICE is a contemporary clothing
+              VELMORI is a contemporary clothing
               label built around one simple idea:
               great clothes should feel effortless.
             </p>
@@ -89,7 +89,7 @@ export default function AboutPage() {
 
             <img
               src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1800&q=90"
-              alt="FABRICE editorial"
+              alt="VELMORI editorial"
               className="h-full w-full object-cover"
             />
 
@@ -98,7 +98,7 @@ export default function AboutPage() {
             <div className="absolute bottom-7 left-7 text-white sm:bottom-10 sm:left-10">
 
               <p className="text-[9px] uppercase tracking-[0.3em] text-white/60">
-                FABRICE / 2026
+                VELMORI / 2026
               </p>
 
               <p className="mt-3 text-3xl font-black uppercase tracking-[-0.06em] sm:text-5xl">
@@ -167,7 +167,7 @@ export default function AboutPage() {
         <div className="mx-auto max-w-[1400px]">
 
           <p className="text-center text-[9px] uppercase tracking-[0.3em] text-black/40">
-            The FABRICE Philosophy
+            The VELMORI Philosophy
           </p>
 
           <h2 className="mt-10 text-center text-5xl font-black uppercase leading-[0.85] tracking-[-0.07em] sm:text-7xl lg:text-[9rem]">
@@ -179,7 +179,7 @@ export default function AboutPage() {
           <p className="mx-auto mt-10 max-w-xl text-center text-sm leading-7 text-black/50">
             We believe clothing should complement the
             person wearing it — not compete with them.
-            That&apos;s why FABRICE focuses on timeless
+            That&apos;s why VELMORI focuses on timeless
             silhouettes, strong materials and details
             that reward a closer look.
           </p>
@@ -207,7 +207,7 @@ export default function AboutPage() {
           </h2>
 
           <p className="mx-auto mt-7 max-w-md text-sm leading-6 text-white/45">
-            Explore the latest FABRICE collection and
+            Explore the latest VELMORI collection and
             find pieces made for your everyday.
           </p>
 

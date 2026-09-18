@@ -15,7 +15,7 @@ const helpLinks = [
 ];
 
 const brandLinks = [
-  { label: "About FABRICE", href: "/about" },
+  { label: "About VELMORI", href: "/about" },
   { label: "Wishlist", href: "/wishlist" },
   { label: "Your Bag", href: "/cart" },
 ];
@@ -42,7 +42,7 @@ export default function Footer() {
                 href="/"
                 className="text-4xl font-black tracking-[-0.08em]"
               >
-                FABRICE
+                VELMORI
               </Link>
 
               <p className="mt-5 max-w-sm text-sm leading-6 text-white/40">
@@ -109,12 +109,12 @@ export default function Footer() {
 
             </div>
 
-            {/* FABRICE */}
+            {/* VELMORI */}
 
             <div>
 
               <p className="mb-6 text-[9px] font-bold uppercase tracking-[0.25em] text-white/40">
-                FABRICE
+                VELMORI
               </p>
 
               <nav className="flex flex-col gap-4">
@@ -189,7 +189,7 @@ export default function Footer() {
         <div className="mx-auto flex max-w-[1600px] flex-col justify-between gap-4 sm:flex-row sm:items-center">
 
           <p className="text-[8px] uppercase tracking-[0.2em] text-white/30">
-            © 2026 FABRICE. All rights reserved.
+            © 2026 VELMORI. All rights reserved.
           </p>
 
           <div className="flex gap-6">

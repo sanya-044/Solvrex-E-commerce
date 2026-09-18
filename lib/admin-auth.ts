@@ -9,7 +9,7 @@ if (!secret) {
 
 const secretKey = new TextEncoder().encode(secret);
 
-const COOKIE_NAME = "fabrice_admin_session";
+const COOKIE_NAME = "VELMORI_admin_session";
 
 export async function createAdminSession(
   adminId: string,
