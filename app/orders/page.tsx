@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
 import { getOrdersByUserId } from "@/lib/orders";
-import OrderStatusBadge from "@/components/OrderStatusBadge";
 
 export const metadata = {
   title: "Your Orders / VELMORI",
@@ -48,7 +47,7 @@ export default async function OrdersPage() {
                 key={order.id}
                 className="border border-black/15 bg-white p-6 sm:p-8 transition-all hover:border-black"
               >
-                {/* Order Meta Header */}
+                {/* Order Meta Header (Status section removed) */}
                 <div className="flex flex-wrap items-center justify-between gap-4 border-b border-black/10 pb-4 mb-6">
                   <div>
                     <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-black/40">
@@ -57,14 +56,6 @@ export default async function OrdersPage() {
                     <p className="text-sm font-bold uppercase tracking-wide mt-1">
                       #{order.orderNumber}
                     </p>
-                  </div>
-                  <div>
-                    <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-black/40">
-                      Status
-                    </p>
-                    <div className="mt-1">
-                      <OrderStatusBadge status={order.status} />
-                    </div>
                   </div>
                   <div>
                     <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-black/40">
@@ -87,7 +78,6 @@ export default async function OrdersPage() {
                         <div className="flex items-center gap-4">
                           {item.image || item.img || item.imageUrl ? (
                             <div className="relative h-16 w-12 flex-shrink-0 bg-neutral-100 border border-black/10 overflow-hidden">
-                              {/* Using a standard HTML img tag to avoid domain config constraints */}
                               <img
                                 src={item.image || item.img || item.imageUrl}
                                 alt={item.name || "Product image"}
@@ -112,17 +102,11 @@ export default async function OrdersPage() {
                   </div>
                 </div>
 
-                {/* Footer details & details link */}
+                {/* Footer details (View Details link removed) */}
                 <div className="mt-6 pt-4 border-t border-black/10 flex flex-wrap items-center justify-between gap-4 text-[10px] uppercase tracking-[0.15em] text-black/50">
                   <span>
                     Placed on: {new Date(order.createdAt).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}
                   </span>
-                  <Link
-                    href={`/orders/${order.id}`}
-                    className="font-bold text-black underline hover:text-neutral-600"
-                  >
-                    View Details →
-                  </Link>
                 </div>
               </div>
             ))}

@@ -38,6 +38,7 @@ export default function LoginPage() {
       return;
     }
 
+    // Always route regular users back to the storefront home page
     router.push("/");
     router.refresh();
   };
@@ -48,44 +49,44 @@ export default function LoginPage() {
   };
 
   const handleForgotPasswordSubmit = async (
-  e: React.FormEvent
-) => {
-  e.preventDefault();
+    e: React.FormEvent
+  ) => {
+    e.preventDefault();
 
-  setForgotLoading(true);
+    setForgotLoading(true);
 
-  try {
-    const response = await fetch("/api/auth/forgot-password", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: forgotEmail,
-      }),
-    });
+    try {
+      const response = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: forgotEmail,
+        }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(
-        data.message || "Unable to send reset link."
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Unable to send reset link."
+        );
+      }
+
+      setForgotSubmitted(true);
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Unable to send reset link."
       );
+    } finally {
+      setForgotLoading(false);
     }
-
-    setForgotSubmitted(true);
-  } catch (error) {
-    console.error(error);
-
-    alert(
-      error instanceof Error
-        ? error.message
-        : "Unable to send reset link."
-    );
-  } finally {
-    setForgotLoading(false);
-  }
-};
+  };
 
   return (
     <main className="min-h-[calc(100vh-144px)] bg-[#f5f3ee] px-5 py-16 sm:px-8 lg:px-12">
@@ -248,6 +249,16 @@ export default function LoginPage() {
           >
             Create Account
           </Link>
+
+          {/* ADMIN LOGIN LINK */}
+          <div className="mt-6 border-t border-black/5 pt-6">
+            <Link
+              href="/admin/login"
+              className="text-xs font-bold uppercase tracking-[0.15em] text-black underline underline-offset-4 transition-opacity hover:opacity-60"
+            >
+              Are you an admin? Login here
+            </Link>
+          </div>
         </div>
 
       </div>
