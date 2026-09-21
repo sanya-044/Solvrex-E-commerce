@@ -1,25 +1,27 @@
-
-"use client";
+ "use client";
 import Link from "next/link";
 import { Heart } from "lucide-react";
 import type { Product } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
+
 type ProductCardProps = {
   product: Product;
 };
 
 export default function ProductCard({ product }: ProductCardProps) {
   const toggleWishlist = useWishlistStore(
-  (state) => state.toggleWishlist
-);
+    (state) => state.toggleWishlist
+  );
 
-const isWishlisted = useWishlistStore(
-  (state) =>
-    state.items.some(
-      (item) => item.id === product.id
-    )
-);
+  const isWishlisted = useWishlistStore(
+    (state) =>
+      state.items.some(
+        (item) => item.id === product.id
+      )
+  );
+
+  const addToCart = useCartStore((state) => state.addToCart);
 
   const discount = Math.round(
     ((product.originalPrice - product.price) / product.originalPrice) * 100
@@ -44,37 +46,45 @@ const isWishlisted = useWishlistStore(
 
         {/* Wishlist */}
         <button
-  type="button"
-  onClick={(e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    toggleWishlist(product);
-  }}
-  aria-label={
-    isWishlisted
-      ? "Remove from wishlist"
-      : "Add to wishlist"
-  }
-  className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-white transition-all hover:scale-105"
->
-  <Heart
-    size={17}
-    strokeWidth={1.3}
-    fill={
-      isWishlisted
-        ? "currentColor"
-        : "none"
-    }
-    className={
-      isWishlisted
-        ? "text-black"
-        : "text-black"
-    }
-  />
-</button>
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleWishlist(product);
+          }}
+          aria-label={
+            isWishlisted
+              ? "Remove from wishlist"
+              : "Add to wishlist"
+          }
+          className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-white transition-all hover:scale-105"
+        >
+          <Heart
+            size={17}
+            strokeWidth={1.3}
+            fill={
+              isWishlisted
+                ? "currentColor"
+                : "none"
+            }
+            className={
+              isWishlisted
+                ? "text-black"
+                : "text-black"
+            }
+          />
+        </button>
 
         {/* Quick Add */}
-        <button className="absolute bottom-3 left-3 right-3 hidden bg-white py-3 text-[9px] font-semibold uppercase tracking-[0.2em] opacity-0 transition-all duration-300 group-hover:opacity-100 sm:block">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            addToCart(product, "M", 1);
+          }}
+          className="absolute bottom-3 left-3 right-3 z-20 hidden bg-white py-3 text-[9px] font-semibold uppercase tracking-[0.2em] opacity-0 transition-all duration-300 group-hover:opacity-100 sm:block hover:bg-black hover:text-white"
+        >
           Quick Add
         </button>
       </div>
