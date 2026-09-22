@@ -11,14 +11,14 @@ export default async function AdminOrdersPage() {
     .toArray();
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 p-5 sm:p-8 lg:p-12">
       {/* HEADER */}
       <div>
         <p className="text-[9px] uppercase tracking-[0.3em] text-black/40">
           Management
         </p>
 
-        <div className="mt-2 flex items-end justify-between gap-6">
+        <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
           <div>
             <h1 className="text-3xl font-black uppercase tracking-[-0.05em]">
               Orders

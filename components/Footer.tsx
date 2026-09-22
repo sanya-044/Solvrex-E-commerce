@@ -1,7 +1,4 @@
- "use client";
-
 import Link from "next/link";
-import { useState } from "react";
 
 const shopLinks = [
   { label: "Men", href: "/category/men" },
@@ -11,10 +8,10 @@ const shopLinks = [
 ];
 
 const helpLinks = [
-  { label: "Shipping", href: "/shipping" },
-  { label: "Returns", href: "/returns" },
-  { label: "FAQ", href: "/faq" },
-  { label: "Contact", href: "/contact" },
+  { label: "Shipping", href: "#" },
+  { label: "Returns", href: "#" },
+  { label: "FAQ", href: "#" },
+  { label: "Contact", href: "#" },
 ];
 
 const brandLinks = [
@@ -24,43 +21,6 @@ const brandLinks = [
 ];
 
 export default function Footer() {
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [message, setMessage] = useState("");
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !email.includes("@")) {
-      setStatus("error");
-      setMessage("Please enter a valid email address.");
-      return;
-    }
-
-    setStatus("loading");
-    setMessage("");
-
-    try {
-      const res = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to subscribe.");
-      }
-
-      setStatus("success");
-      setMessage("Successfully subscribed!");
-      setEmail("");
-    } catch (err: any) {
-      setStatus("error");
-      setMessage(err.message || "Something went wrong. Please try again.");
-    }
-  };
-
   return (
     <footer className="bg-[#0a0a0a] text-white">
 
@@ -72,11 +32,11 @@ export default function Footer() {
 
         <div className="mx-auto max-w-[1600px]">
 
-          <div className="grid gap-14 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
+          <div className="grid gap-10 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-14 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-14">
 
             {/* BRAND */}
 
-            <div>
+            <div className="sm:col-span-2 lg:col-span-1">
 
               <Link
                 href="/"
@@ -195,34 +155,21 @@ export default function Footer() {
 
               </div>
 
-              <div className="w-full max-w-lg">
-                <form onSubmit={handleSubscribe} className="flex gap-2">
+              <div className="flex w-full max-w-lg gap-2">
 
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Your email address"
-                    required
-                    disabled={status === "loading" || status === "success"}
-                    className="h-12 min-w-0 flex-1 border border-white/15 bg-transparent px-4 text-sm text-white outline-none placeholder:text-white/25 focus:border-white disabled:opacity-50"
-                  />
+                <input
+                  type="email"
+                  placeholder="Your email address"
+                  className="h-12 min-w-0 flex-1 border border-white/15 bg-transparent px-4 text-sm text-white outline-none placeholder:text-white/25 focus:border-white"
+                />
 
-                  <button
-                    type="submit"
-                    disabled={status === "loading" || status === "success"}
-                    className="h-12 bg-white px-6 text-[9px] font-bold uppercase tracking-[0.15em] text-black transition-opacity hover:opacity-80 disabled:opacity-50"
-                  >
-                    {status === "loading" ? "Subscribing..." : status === "success" ? "Subscribed" : "Subscribe"}
-                  </button>
+                <button
+                  type="button"
+                  className="h-12 bg-white px-6 text-[9px] font-bold uppercase tracking-[0.15em] text-black transition-opacity hover:opacity-80"
+                >
+                  Subscribe
+                </button>
 
-                </form>
-
-                {message && (
-                  <p className={`mt-2 text-[10px] tracking-wider uppercase ${status === "success" ? "text-green-400" : "text-red-400"}`}>
-                    {message}
-                  </p>
-                )}
               </div>
 
             </div>

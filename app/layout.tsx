@@ -1,4 +1,4 @@
- import type { Metadata } from "next";
+ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "./globals.css";
@@ -21,6 +21,17 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "VELMORI",
   description: "Modern fashion. Simple shopping.",
+};
+
+// Mobile viewport configuration — ensures the site scales to the
+// device width instead of rendering at a fixed desktop width, and
+// extends the background under iOS/Android system bars correctly.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+  themeColor: "#f5f3ee",
 };
 
 export default function RootLayout({

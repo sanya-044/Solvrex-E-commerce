@@ -156,7 +156,7 @@ useEffect(() => {
       {/* FILTER BAR */}
       {/* ================================= */}
 
-      <section className="sticky top-0 z-20 border-b border-black/10 bg-[#f5f3ee]/95 px-5 backdrop-blur-md sm:px-8 lg:px-12">
+      <section className="sticky top-[72px] z-20 border-b border-black/10 bg-[#f5f3ee]/95 px-5 backdrop-blur-md sm:px-8 lg:px-12">
 
         <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-5 py-4">
 

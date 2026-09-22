@@ -17,16 +17,16 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-[#f5f3ee] text-black">
-      <header className="flex h-20 items-center justify-between border-b border-black/10 px-8">
+      <header className="flex h-20 items-center justify-between gap-3 border-b border-black/10 px-4 sm:px-8">
         <Link
           href="/admin"
-          className="text-2xl font-black tracking-[-0.05em]"
+          className="shrink-0 text-xl font-black tracking-[-0.05em] sm:text-2xl"
         >
           VELMORI
         </Link>
 
-        <div className="flex items-center gap-6">
-          <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/50">
+        <div className="flex items-center gap-3 sm:gap-6">
+          <p className="hidden truncate text-[9px] font-bold uppercase tracking-[0.18em] text-black/50 sm:block">
             {admin.email}
           </p>
 
@@ -34,37 +34,37 @@ export default async function AdminLayout({
         </div>
       </header>
 
-      <div className="flex min-h-[calc(100vh-80px)]">
-        <aside className="w-60 shrink-0 border-r border-black/10 p-6">
-          <p className="mb-6 text-[9px] font-bold uppercase tracking-[0.25em] text-black/30">
+      <div className="flex min-h-[calc(100vh-80px)] flex-col md:flex-row">
+        <aside className="w-full shrink-0 border-b border-black/10 p-4 md:w-60 md:border-b-0 md:border-r md:p-6">
+          <p className="mb-3 hidden text-[9px] font-bold uppercase tracking-[0.25em] text-black/30 md:mb-6 md:block">
             Administration
           </p>
 
-          <nav className="space-y-1">
+          <nav className="flex gap-2 overflow-x-auto scrollbar-hide md:block md:space-y-1 md:overflow-visible">
             <Link
               href="/admin"
-              className="block px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] transition-colors hover:bg-black hover:text-white"
+              className="block shrink-0 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] transition-colors hover:bg-black hover:text-white"
             >
               Dashboard
             </Link>
 
             <Link
               href="/admin/products"
-              className="block px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] transition-colors hover:bg-black hover:text-white"
+              className="block shrink-0 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] transition-colors hover:bg-black hover:text-white"
             >
               Products
             </Link>
 
             <Link
               href="/admin/orders"
-              className="block px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] transition-colors hover:bg-black hover:text-white"
+              className="block shrink-0 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] transition-colors hover:bg-black hover:text-white"
             >
               Orders
             </Link>
 
             <Link
               href="/admin/customers"
-              className="block px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] transition-colors hover:bg-black hover:text-white"
+              className="block shrink-0 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.18em] transition-colors hover:bg-black hover:text-white"
             >
               Customers
             </Link>

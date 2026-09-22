@@ -99,14 +99,14 @@ const handleDelete = async (
   }
 };
   return (
-    <div className="p-8 lg:p-12">
-      <div className="flex items-end justify-between border-b border-black/10 pb-10">
+    <div className="p-5 sm:p-8 lg:p-12">
+      <div className="flex flex-col gap-6 border-b border-black/10 pb-10 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="mb-4 text-[9px] font-bold uppercase tracking-[0.3em] text-black/40">
             Store Management
           </p>
 
-          <h1 className="text-5xl font-black tracking-[-0.06em]">
+          <h1 className="text-4xl font-black tracking-[-0.06em] sm:text-5xl">
             PRODUCTS
           </h1>
 
@@ -121,7 +121,7 @@ const handleDelete = async (
     window.location.href =
       "/admin/products/new"
   }
-  className="bg-black px-6 py-4 text-[9px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80"
+  className="shrink-0 bg-black px-6 py-4 text-[9px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80"
 >
   + Add Product
 </button>
@@ -147,8 +147,8 @@ const handleDelete = async (
             </h2>
           </div>
         ) : (
-          <div className="overflow-hidden border border-black/10">
-            <table className="w-full border-collapse">
+          <div className="overflow-x-auto border border-black/10">
+            <table className="w-full min-w-[760px] border-collapse">
               <thead>
                 <tr className="border-b border-black/10 text-left">
                   <th className="px-5 py-4 text-[8px] font-bold uppercase tracking-[0.18em]">

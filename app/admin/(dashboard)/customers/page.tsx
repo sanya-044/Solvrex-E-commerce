@@ -31,14 +31,14 @@ export default async function CustomersPage() {
 
         {/* HEADER */}
 
-        <div className="mb-10 flex items-end justify-between gap-6">
+        <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
 
           <div>
             <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-black/40">
               Admin / Customers
             </p>
 
-            <h1 className="mt-3 text-5xl font-black uppercase tracking-[-0.06em]">
+            <h1 className="mt-3 text-4xl font-black uppercase tracking-[-0.06em] sm:text-5xl">
               Customers
             </h1>
           </div>

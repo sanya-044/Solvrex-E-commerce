@@ -113,7 +113,7 @@ export default function Hero() {
       ref={sectionRef}
       className="relative h-[300vh] bg-black"
     >
-      <div className="sticky top-0 h-screen overflow-hidden">
+      <div className="sticky top-0 h-screen h-[100dvh] overflow-hidden">
 
         {/* MOVING HERO TRACK */}
         <div
