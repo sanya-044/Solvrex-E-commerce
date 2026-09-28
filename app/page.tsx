@@ -46,32 +46,33 @@ const collections = [
 ];
 
 export default async function Home() {
-  const client = await clientPromise;
+  let products: Product[] = [];
 
-const db = client.db("VELMORI");
+  try {
+    const client = await clientPromise;
+    const db = client.db("VELMORI");
 
-const productDocuments =
-  await db
-    .collection("products")
-    .find({})
-    .sort({ id: 1 })
-    .toArray();
+    const productDocuments = await db
+      .collection("products")
+      .find({})
+      .sort({ id: 1 })
+      .toArray();
 
-const products: Product[] =
-  productDocuments.map((product) => ({
-    id: product.id,
-    name: product.name,
-    category: product.category,
-    gender: product.gender,
-    price: product.price,
-    originalPrice: product.originalPrice,
-    image: product.image,
-    description: product.description,
-    sizes: product.sizes,
-    ...(product.badge
-      ? { badge: product.badge }
-      : {}),
-  }));
+    products = productDocuments.map((product) => ({
+      id: Number(product.id),
+      name: String(product.name || ""),
+      category: String(product.category || ""),
+      gender: String(product.gender || ""),
+      price: Number(product.price || 0),
+      originalPrice: Number(product.originalPrice || 0),
+      image: String(product.image || ""),
+      description: String(product.description || ""),
+      sizes: Array.isArray(product.sizes) ? (product.sizes as string[]) : [],
+      ...(product.badge ? { badge: String(product.badge) } : {}),
+    }));
+  } catch (error) {
+    console.error("Failed to connect or fetch from MongoDB:", error);
+  }
   return (
     
     <main className="min-h-screen bg-[#f5f3ee] text-[#0a0a0a]">

@@ -1,22 +1,43 @@
- "use client";
+"use client";
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
+  const router = useRouter();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState(""); // Added phone state
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+    setSuccess("");
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+      setError("Passwords do not match.");
       return;
     }
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+
+    const cleanPhone = phone.trim();
+    if (!/^\d{10}$/.test(cleanPhone)) {
+      setError("Phone number must be exactly 10 digits.");
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const response = await fetch("/api/auth/register", {
@@ -25,9 +46,9 @@ export default function SignupPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name,
-          email,
-          phone, // Included phone in the payload sent to backend
+          name: name.trim(),
+          email: email.trim().toLowerCase(),
+          phone: cleanPhone,
           password,
         }),
       });
@@ -35,15 +56,19 @@ export default function SignupPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.message || "Registration failed.");
+        setError(data.message || "Registration failed. Please try again.");
         return;
       }
 
-      alert("Account created successfully!");
-      window.location.href = "/login";
-    } catch (error) {
-      console.error("Registration error:", error);
-      alert("Something went wrong. Please try again.");
+      setSuccess("Account created successfully! Redirecting to login...");
+      setTimeout(() => {
+        router.push("/login");
+      }, 1500);
+    } catch (err) {
+      console.error("Registration error:", err);
+      setError("Unable to connect to the server. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -63,6 +88,20 @@ export default function SignupPage() {
           </p>
         </div>
 
+        {/* ERROR NOTIFICATION */}
+        {error && (
+          <div className="mb-6 border border-red-500/20 bg-red-50 px-4 py-3 text-center text-[10px] uppercase tracking-[0.12em] text-red-600">
+            {error}
+          </div>
+        )}
+
+        {/* SUCCESS NOTIFICATION */}
+        {success && (
+          <div className="mb-6 border border-green-500/20 bg-green-50 px-4 py-3 text-center text-[10px] uppercase tracking-[0.12em] text-green-700">
+            {success}
+          </div>
+        )}
+
         {/* FORM */}
         <form onSubmit={handleSubmit} className="space-y-7">
           {/* NAME */}
@@ -78,9 +117,10 @@ export default function SignupPage() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Your name"
+              placeholder="Your full name"
               required
-              className="h-14 w-full border border-black/15 bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black"
+              disabled={loading}
+              className="h-14 w-full border border-black/15 bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black disabled:opacity-50"
             />
           </div>
 
@@ -99,7 +139,8 @@ export default function SignupPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               required
-              className="h-14 w-full border border-black/15 bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black"
+              disabled={loading}
+              className="h-14 w-full border border-black/15 bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black disabled:opacity-50"
             />
           </div>
 
@@ -116,9 +157,10 @@ export default function SignupPage() {
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="Your phone number"
+              placeholder="10-digit mobile number"
               required
-              className="h-14 w-full border border-black/15 bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black"
+              disabled={loading}
+              className="h-14 w-full border border-black/15 bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black disabled:opacity-50"
             />
           </div>
 
@@ -135,10 +177,11 @@ export default function SignupPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Create a password"
+              placeholder="Create a password (min 8 characters)"
               required
               minLength={8}
-              className="h-14 w-full border border-black/15 bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black"
+              disabled={loading}
+              className="h-14 w-full border border-black/15 bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black disabled:opacity-50"
             />
           </div>
 
@@ -158,16 +201,18 @@ export default function SignupPage() {
               placeholder="Confirm your password"
               required
               minLength={8}
-              className="h-14 w-full border border-black/15 bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black"
+              disabled={loading}
+              className="h-14 w-full border border-black/15 bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black disabled:opacity-50"
             />
           </div>
 
           {/* SUBMIT */}
           <button
             type="submit"
-            className="flex h-14 w-full items-center justify-center bg-black text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80"
+            disabled={loading}
+            className="flex h-14 w-full items-center justify-center bg-black text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Create Account
+            {loading ? "Creating Account..." : "Create Account"}
           </button>
         </form>
 

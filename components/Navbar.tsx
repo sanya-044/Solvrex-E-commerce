@@ -37,9 +37,10 @@ export default function Navbar() {
     const loadProducts = async () => {
       try {
         const response = await fetch("/api/products");
-        if (!response.ok) throw new Error("Unable to load products.");
-        const data = await response.json();
-        if (Array.isArray(data)) setProducts(data);
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data)) setProducts(data);
+        }
       } catch (error) {
         console.error("Navbar products error:", error);
       }
@@ -117,18 +118,16 @@ export default function Navbar() {
               <Search size={20} strokeWidth={1.4} className="transition-opacity hover:opacity-50" />
             </button>
 
-            {status !== "loading" && (
-              <Link
-                href={isAuthenticated ? "/account" : "/login"}
+            <Link
+                href={status === "loading" ? "/login" : isAuthenticated ? "/account" : "/login"}
                 aria-label={isAuthenticated ? "Account" : "Login"}
                 className="flex items-center gap-2 transition-opacity hover:opacity-50"
               >
                 <UserRound size={20} strokeWidth={1.4} />
                 <span className="hidden xl:block text-[9px] font-bold uppercase tracking-[0.16em]">
-                  {isAuthenticated ? session.user?.name || "Account" : "Login"}
+                  {status === "loading" ? "Login" : isAuthenticated ? session.user?.name || "Account" : "Login"}
                 </span>
               </Link>
-            )}
 
             <Link href="/wishlist" aria-label="Wishlist" className="relative hidden sm:block">
               <Heart size={20} strokeWidth={1.4} className="transition-opacity hover:opacity-50" />

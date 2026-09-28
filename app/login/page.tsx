@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import Link from "next/link";
 import { signIn } from "next-auth/react";
@@ -14,7 +14,6 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Forgot Password Modal States
   const [isForgotOpen, setIsForgotOpen] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotSubmitted, setForgotSubmitted] = useState(false);
@@ -38,7 +37,6 @@ export default function LoginPage() {
       return;
     }
 
-    // Always route regular users back to the storefront home page
     router.push("/");
     router.refresh();
   };
@@ -48,11 +46,8 @@ export default function LoginPage() {
     await signIn("google", { callbackUrl: "/" });
   };
 
-  const handleForgotPasswordSubmit = async (
-    e: React.FormEvent
-  ) => {
+  const handleForgotPasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     setForgotLoading(true);
 
     try {
@@ -69,20 +64,13 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.message || "Unable to send reset link."
-        );
+        throw new Error(data.message || "Unable to send reset link.");
       }
 
       setForgotSubmitted(true);
-    } catch (error) {
-      console.error(error);
-
-      alert(
-        error instanceof Error
-          ? error.message
-          : "Unable to send reset link."
-      );
+    } catch (err) {
+      console.error(err);
+      alert(err instanceof Error ? err.message : "Unable to send reset link.");
     } finally {
       setForgotLoading(false);
     }
@@ -91,8 +79,6 @@ export default function LoginPage() {
   return (
     <main className="min-h-[calc(100vh-144px)] bg-[#f5f3ee] px-5 py-16 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-[520px]">
-
-        {/* HEADER */}
         <div className="mb-12 text-center">
           <p className="mb-4 text-[9px] font-bold uppercase tracking-[0.3em] text-black/40">
             Welcome Back
@@ -107,17 +93,13 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* ERROR */}
         {error && (
           <div className="mb-6 border border-red-500/20 bg-red-50 px-4 py-3 text-center text-[10px] uppercase tracking-[0.12em] text-red-600">
             {error}
           </div>
         )}
 
-        {/* FORM */}
         <form onSubmit={handleSubmit} className="space-y-7">
-
-          {/* EMAIL */}
           <div>
             <label
               htmlFor="email"
@@ -138,7 +120,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* PASSWORD */}
           <div>
             <div className="mb-3 flex items-center justify-between">
               <label
@@ -173,7 +154,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* SUBMIT */}
           <button
             type="submit"
             disabled={loading}
@@ -181,10 +161,8 @@ export default function LoginPage() {
           >
             {loading ? "Signing In..." : "Login"}
           </button>
-
         </form>
 
-        {/* DIVIDER */}
         <div className="relative my-8 flex items-center justify-center">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-black/10" />
@@ -194,7 +172,6 @@ export default function LoginPage() {
           </span>
         </div>
 
-        {/* GOOGLE SIGN IN */}
         <button
           type="button"
           onClick={handleGoogleSignIn}
@@ -222,22 +199,6 @@ export default function LoginPage() {
           Continue with Google
         </button>
 
-        {/* DEMO ACCOUNT */}
-        <div className="mt-8 border border-black/10 px-5 py-4">
-          <p className="mb-2 text-[8px] font-bold uppercase tracking-[0.2em] text-black/40">
-            Test Account
-          </p>
-
-          <p className="text-xs text-black/60">
-            demo@VELMORI.com
-          </p>
-
-          <p className="mt-1 text-xs text-black/60">
-            password123
-          </p>
-        </div>
-
-        {/* SIGNUP */}
         <div className="mt-10 border-t border-black/10 pt-8 text-center">
           <p className="text-sm text-black/50">
             Don&apos;t have an account?
@@ -250,7 +211,6 @@ export default function LoginPage() {
             Create Account
           </Link>
 
-          {/* ADMIN LOGIN LINK */}
           <div className="mt-6 border-t border-black/5 pt-6">
             <Link
               href="/admin/login"
@@ -260,14 +220,11 @@ export default function LoginPage() {
             </Link>
           </div>
         </div>
-
       </div>
 
-      {/* FORGOT PASSWORD MODAL */}
       {isForgotOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm">
           <div className="relative w-full max-w-md bg-[#f5f3ee] p-8 shadow-2xl border border-black/10">
-            
             <button
               type="button"
               onClick={() => setIsForgotOpen(false)}
@@ -279,7 +236,7 @@ export default function LoginPage() {
             <h3 className="text-xl font-black uppercase tracking-[-0.04em] mb-2">
               Reset Password
             </h3>
-            
+
             <p className="text-xs text-black/50 mb-6">
               Enter your email address and we will send you a link to reset your password.
             </p>
@@ -313,11 +270,9 @@ export default function LoginPage() {
                 </button>
               </form>
             )}
-
           </div>
         </div>
       )}
-
     </main>
   );
 }
