@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { X } from "lucide-react";
+import AuthLayout from "@/components/AuthLayout";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -77,148 +78,146 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-[calc(100vh-144px)] bg-[#f5f3ee] px-5 py-16 sm:px-8 lg:px-12">
-      <div className="mx-auto max-w-[520px]">
-        <div className="mb-12 text-center">
-          <p className="mb-4 text-[9px] font-bold uppercase tracking-[0.3em] text-black/40">
-            Welcome Back
-          </p>
+    <AuthLayout>
+      <div className="mb-10 text-center">
+        <p className="mb-4 text-[9px] font-bold uppercase tracking-[0.3em] text-black/40">
+          Welcome Back
+        </p>
 
-          <h1 className="text-5xl font-black tracking-[-0.06em] sm:text-6xl">
-            LOGIN
-          </h1>
+        <h1 className="text-5xl font-black tracking-[-0.06em] sm:text-6xl">
+          LOGIN
+        </h1>
 
-          <p className="mx-auto mt-5 max-w-[360px] text-sm leading-6 text-black/50">
-            Sign in to your VELMORI account to continue shopping.
-          </p>
+        <p className="mx-auto mt-5 max-w-[360px] text-sm leading-6 text-black/50">
+          Sign in to your VELMORI account to continue shopping.
+        </p>
+      </div>
+
+      {error && (
+        <div className="mb-6 border border-red-500/20 bg-red-50 px-4 py-3 text-center text-[10px] uppercase tracking-[0.12em] text-red-600">
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-7">
+        <div>
+          <label
+            htmlFor="email"
+            className="mb-3 block text-[9px] font-bold uppercase tracking-[0.2em]"
+          >
+            Email Address
+          </label>
+
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            required
+            disabled={loading}
+            className="h-14 w-full border border-black/15 bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black disabled:opacity-50"
+          />
         </div>
 
-        {error && (
-          <div className="mb-6 border border-red-500/20 bg-red-50 px-4 py-3 text-center text-[10px] uppercase tracking-[0.12em] text-red-600">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-7">
-          <div>
+        <div>
+          <div className="mb-3 flex items-center justify-between">
             <label
-              htmlFor="email"
-              className="mb-3 block text-[9px] font-bold uppercase tracking-[0.2em]"
+              htmlFor="password"
+              className="text-[9px] font-bold uppercase tracking-[0.2em]"
             >
-              Email Address
+              Password
             </label>
 
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-              disabled={loading}
-              className="h-14 w-full border border-black/15 bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black disabled:opacity-50"
-            />
+            <button
+              type="button"
+              onClick={() => {
+                setForgotSubmitted(false);
+                setForgotEmail("");
+                setIsForgotOpen(true);
+              }}
+              className="text-[9px] uppercase tracking-[0.15em] text-black/40 transition-opacity hover:opacity-100"
+            >
+              Forgot Password?
+            </button>
           </div>
 
-          <div>
-            <div className="mb-3 flex items-center justify-between">
-              <label
-                htmlFor="password"
-                className="text-[9px] font-bold uppercase tracking-[0.2em]"
-              >
-                Password
-              </label>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setForgotSubmitted(false);
-                  setForgotEmail("");
-                  setIsForgotOpen(true);
-                }}
-                className="text-[9px] uppercase tracking-[0.15em] text-black/40 transition-opacity hover:opacity-100"
-              >
-                Forgot Password?
-              </button>
-            </div>
-
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              required
-              disabled={loading}
-              className="h-14 w-full border border-black/15 bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black disabled:opacity-50"
-            />
-          </div>
-
-          <button
-            type="submit"
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
+            required
             disabled={loading}
-            className="flex h-14 w-full items-center justify-center bg-black text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {loading ? "Signing In..." : "Login"}
-          </button>
-        </form>
-
-        <div className="relative my-8 flex items-center justify-center">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-black/10" />
-          </div>
-          <span className="relative bg-[#f5f3ee] px-4 text-[9px] uppercase tracking-[0.2em] text-black/40">
-            Or
-          </span>
+            className="h-14 w-full border border-black/15 bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black disabled:opacity-50"
+          />
         </div>
 
         <button
-          type="button"
-          onClick={handleGoogleSignIn}
+          type="submit"
           disabled={loading}
-          className="flex h-14 w-full items-center justify-center gap-3 border border-black/15 bg-white text-[10px] font-bold uppercase tracking-[0.2em] text-black transition-all hover:border-black disabled:opacity-50"
+          className="flex h-14 w-full items-center justify-center bg-black text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <svg className="h-4 w-4" viewBox="0 0 24 24">
-            <path
-              fill="#4285F4"
-              d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"
-            />
-            <path
-              fill="#34A853"
-              d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.19v3.15C3.21 21.34 7.27 24 12 24z"
-            />
-            <path
-              fill="#FBBC05"
-              d="M5.27 14.24c-.25-.72-.39-1.5-.39-2.24s.14-1.52.39-2.24V6.6H1.19C.43 8.13 0 9.87 0 12s.43 3.87 1.19 5.4l4.08-3.16z"
-            />
-            <path
-              fill="#EA4335"
-              d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.27 0 3.21 2.66 1.19 6.6l4.08 3.15c.95-2.85 3.6-4.96 6.73-4.96z"
-            />
-          </svg>
-          Continue with Google
+          {loading ? "Signing In..." : "Login"}
         </button>
+      </form>
 
-        <div className="mt-10 border-t border-black/10 pt-8 text-center">
-          <p className="text-sm text-black/50">
-            Don&apos;t have an account?
-          </p>
+      <div className="relative my-8 flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-black/10" />
+        </div>
+        <span className="relative bg-[#f5f3ee] px-4 text-[9px] uppercase tracking-[0.2em] text-black/40">
+          Or
+        </span>
+      </div>
 
+      <button
+        type="button"
+        onClick={handleGoogleSignIn}
+        disabled={loading}
+        className="flex h-14 w-full items-center justify-center gap-3 border border-black/15 bg-white text-[10px] font-bold uppercase tracking-[0.2em] text-black transition-all hover:border-black disabled:opacity-50"
+      >
+        <svg className="h-4 w-4" viewBox="0 0 24 24">
+          <path
+            fill="#4285F4"
+            d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"
+          />
+          <path
+            fill="#34A853"
+            d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.19v3.15C3.21 21.34 7.27 24 12 24z"
+          />
+          <path
+            fill="#FBBC05"
+            d="M5.27 14.24c-.25-.72-.39-1.5-.39-2.24s.14-1.52.39-2.24V6.6H1.19C.43 8.13 0 9.87 0 12s.43 3.87 1.19 5.4l4.08-3.16z"
+          />
+          <path
+            fill="#EA4335"
+            d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.27 0 3.21 2.66 1.19 6.6l4.08 3.15c.95-2.85 3.6-4.96 6.73-4.96z"
+          />
+        </svg>
+        Continue with Google
+      </button>
+
+      <div className="mt-10 border-t border-black/10 pt-8 text-center">
+        <p className="text-sm text-black/50">
+          Don&apos;t have an account?
+        </p>
+
+        <Link
+          href="/signup"
+          className="mt-3 inline-block text-[10px] font-bold uppercase tracking-[0.2em] underline underline-offset-4 transition-opacity hover:opacity-50"
+        >
+          Create Account
+        </Link>
+
+        <div className="mt-6 border-t border-black/5 pt-6">
           <Link
-            href="/signup"
-            className="mt-3 inline-block text-[10px] font-bold uppercase tracking-[0.2em] underline underline-offset-4 transition-opacity hover:opacity-50"
+            href="/admin/login"
+            className="text-xs font-bold uppercase tracking-[0.15em] text-black underline underline-offset-4 transition-opacity hover:opacity-60"
           >
-            Create Account
+            Are you an admin? Login here
           </Link>
-
-          <div className="mt-6 border-t border-black/5 pt-6">
-            <Link
-              href="/admin/login"
-              className="text-xs font-bold uppercase tracking-[0.15em] text-black underline underline-offset-4 transition-opacity hover:opacity-60"
-            >
-              Are you an admin? Login here
-            </Link>
-          </div>
         </div>
       </div>
 
@@ -273,6 +272,6 @@ export default function LoginPage() {
           </div>
         </div>
       )}
-    </main>
+    </AuthLayout>
   );
 }
