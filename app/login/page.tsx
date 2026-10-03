@@ -1,4 +1,4 @@
-"use client";
+ "use client";
 
 import Link from "next/link";
 import { signIn } from "next-auth/react";
@@ -237,7 +237,8 @@ export default function LoginPage() {
             </h3>
 
             <p className="text-xs text-black/50 mb-6">
-              Enter your email address and we will send you a link to reset your password.
+              Enter your email address and we will send you a link to
+              reset your password.
             </p>
 
             {forgotSubmitted ? (
@@ -245,7 +246,10 @@ export default function LoginPage() {
                 Recovery instructions have been sent to your email.
               </div>
             ) : (
-              <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
+              <form
+                onSubmit={handleForgotPasswordSubmit}
+                className="space-y-4"
+              >
                 <div>
                   <label className="mb-2 block text-[9px] font-bold uppercase tracking-[0.2em]">
                     Email Address
