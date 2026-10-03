@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
+import AuthLayout from "@/components/AuthLayout";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -43,118 +44,126 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <main className="min-h-[calc(100vh-144px)] bg-[#f5f3ee] px-5 py-16 sm:px-8 lg:px-12">
-      <div className="mx-auto max-w-[520px]">
-        <div className="mb-12 text-center">
-          <p className="mb-4 text-[9px] font-bold uppercase tracking-[0.3em] text-black/40">
-            Administration Portal
-          </p>
+    <AuthLayout>
+      <div className="mb-10 text-center">
+        <p className="mb-4 text-[9px] font-bold uppercase tracking-[0.3em] text-black/40">
+          Welcome Back
+        </p>
 
-          <h1 className="text-5xl font-black tracking-[-0.06em] sm:text-6xl">
-            ADMIN LOGIN
-          </h1>
+        <h1 className="text-5xl font-black tracking-[-0.06em] sm:text-6xl">
+          ADMIN LOGIN
+        </h1>
 
-          <p className="mx-auto mt-5 max-w-[360px] text-sm leading-6 text-black/50">
-            Sign in with your administrator credentials to access the store management dashboard.
-          </p>
+        <p className="mx-auto mt-5 max-w-[360px] text-sm leading-6 text-black/50">
+          Sign in with your administrator credentials to access
+          the store management dashboard.
+        </p>
+      </div>
+
+      {error && (
+        <div className="mb-6 border border-red-500/20 bg-red-50 px-4 py-3 text-center text-[10px] uppercase tracking-[0.12em] text-red-600">
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-7">
+        <div>
+          <label
+            htmlFor="admin-email"
+            className="mb-3 block text-[9px] font-bold uppercase tracking-[0.2em]"
+          >
+            Email Address
+          </label>
+
+          <input
+            id="admin-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="admin@velmori.com"
+            required
+            autoComplete="email"
+            disabled={loading}
+            className="h-14 w-full border border-black/15 bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black disabled:opacity-50"
+          />
         </div>
 
-        {error && (
-          <div className="mb-6 border border-red-500/20 bg-red-50 px-4 py-3 text-center text-[10px] uppercase tracking-[0.12em] text-red-600">
-            {error}
-          </div>
-        )}
+        <div>
+          <label
+            htmlFor="admin-password"
+            className="mb-3 block text-[9px] font-bold uppercase tracking-[0.2em]"
+          >
+            Password
+          </label>
 
-        <form onSubmit={handleSubmit} className="space-y-7">
-          <div>
-            <label
-              htmlFor="admin-email"
-              className="mb-3 block text-[9px] font-bold uppercase tracking-[0.2em]"
-            >
-              Email Address
-            </label>
-
+          <div className="relative">
             <input
-              id="admin-email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@velmori.com"
+              id="admin-password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
               required
-              autoComplete="email"
+              autoComplete="current-password"
               disabled={loading}
-              className="h-14 w-full border border-black/15 bg-transparent px-4 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black disabled:opacity-50"
+              className="h-14 w-full border border-black/15 bg-transparent px-4 pr-12 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black disabled:opacity-50"
             />
-          </div>
 
-          <div>
-            <label
-              htmlFor="admin-password"
-              className="mb-3 block text-[9px] font-bold uppercase tracking-[0.2em]"
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-black/40 transition-colors hover:text-black"
+              tabIndex={-1}
             >
-              Password
-            </label>
-
-            <div className="relative">
-              <input
-                id="admin-password"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                required
-                autoComplete="current-password"
-                disabled={loading}
-                className="h-14 w-full border border-black/15 bg-transparent px-4 pr-12 text-sm outline-none transition-colors placeholder:text-black/25 focus:border-black disabled:opacity-50"
-              />
-
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-black/40 transition-colors hover:text-black"
-                tabIndex={-1}
-              >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" strokeWidth={1.5} />
-                ) : (
-                  <Eye className="h-4 w-4" strokeWidth={1.5} />
-                )}
-              </button>
-            </div>
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" strokeWidth={1.5} />
+              ) : (
+                <Eye className="h-4 w-4" strokeWidth={1.5} />
+              )}
+            </button>
           </div>
+        </div>
 
-          <button
-            id="admin-login-btn"
-            type="submit"
-            disabled={loading}
-            className="flex h-14 w-full items-center justify-center bg-black text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {loading ? "Authenticating..." : "Login as Admin"}
-          </button>
-        </form>
+        <button
+          id="admin-login-btn"
+          type="submit"
+          disabled={loading}
+          className="flex h-14 w-full items-center justify-center bg-black text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {loading ? "Authenticating..." : "Login as Admin"}
+        </button>
+      </form>
 
-        <div className="mt-10 border-t border-black/10 pt-8 text-center space-y-4">
-          <p className="text-sm text-black/50">
-            Don&apos;t have an admin account?
-          </p>
+      <div className="relative my-8 flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-black/10" />
+        </div>
+        <span className="relative bg-[#f5f3ee] px-4 text-[9px] uppercase tracking-[0.2em] text-black/40">
+          Or
+        </span>
+      </div>
 
+      <div className="text-center space-y-4">
+        <p className="text-sm text-black/50">
+          Don&apos;t have an admin account?
+        </p>
+
+        <Link
+          href="/admin/register"
+          className="inline-block text-[10px] font-bold uppercase tracking-[0.2em] underline underline-offset-4 transition-opacity hover:opacity-50"
+        >
+          Register as Admin
+        </Link>
+
+        <div>
           <Link
-            href="/admin/register"
-            className="inline-block text-[10px] font-bold uppercase tracking-[0.2em] underline underline-offset-4 transition-opacity hover:opacity-50"
+            href="/"
+            className="inline-block text-xs text-black/40 hover:text-black transition-colors"
           >
-            Register as Admin
+            ← Back to Store
           </Link>
-
-          <div>
-            <Link
-              href="/"
-              className="inline-block text-xs text-black/40 hover:text-black transition-colors"
-            >
-              ← Back to Store
-            </Link>
-          </div>
         </div>
       </div>
-    </main>
+    </AuthLayout>
   );
 }
