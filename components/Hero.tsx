@@ -1,235 +1,244 @@
 "use client";
 
-import { ArrowDownRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowLeft, ArrowRight, ArrowDown } from "lucide-react";
+import { useUIStore } from "@/store/uiStore";
 
-const slides = [
+type SlideTheme = "dark" | "light";
+
+interface Slide {
+  number: string;
+  eyebrow: string;
+  title: string[];
+  description: string;
+  image: string;
+  theme: SlideTheme;
+  titleSize?: string; // optional per-slide font size override
+  buttons: {
+    label: string;
+    href: string;
+    primary?: boolean;
+  }[];
+}
+
+const slides: Slide[] = [
   {
     number: "01",
-    label: "COLLECTION 01 — 2026",
     eyebrow: "THE EVERYDAY REBELLION",
     title: ["WEAR", "THE", "UNEXPECTED."],
-    description:
-      "Contemporary essentials designed for people who refuse to blend into the background.",
-    image:
-      "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=2200&q=90",
+    description: "Modern essentials for the way you move.",
+    image: "/images/hero/hero-01.webp",
+    theme: "dark",
+    titleSize: "clamp(48px,4.8vw,82px)",
+    buttons: [
+      { label: "SHOP MEN", href: "/category/men", primary: true },
+      { label: "SHOP WOMEN", href: "/category/women" }
+    ]
   },
   {
     number: "02",
-    label: "COLLECTION 02 — AFTER DARK",
-    eyebrow: "MADE FOR THE NIGHT",
-    title: ["OWN", "THE", "NIGHT."],
-    description:
-      "Statement pieces built for late nights, city lights and everything in between.",
-    image:
-      "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=2200&q=90",
+    eyebrow: "NEW SEASON",
+    title: ["MAKE", "YOUR", "MOVE."],
+    description: "Modern silhouettes designed for wherever the day takes you.",
+    image: "/images/hero/hero-02.webp",
+    theme: "dark",
+    buttons: [
+      { label: "EXPLORE COLLECTION", href: "/shop", primary: true }
+    ]
   },
   {
     number: "03",
-    label: "COLLECTION 03 — NEW SEASON",
-    eyebrow: "A NEW PERSPECTIVE",
-    title: ["MAKE", "YOUR", "MOVE."],
-    description:
-      "Relaxed silhouettes. Bold details. A wardrobe without the rules.",
-    image:
-      "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=2200&q=90",
-  },
+    eyebrow: "THE NEXT EDIT",
+    title: ["BUILT", "FOR", "EVERYDAY."],
+    description: "Essential pieces. Refined proportions. Made for real life.",
+    image: "/images/hero/hero-03.webp",
+    theme: "light",
+    buttons: [
+      { label: "DISCOVER COLLECTION", href: "/shop", primary: true }
+    ]
+  }
 ];
 
 export default function Hero() {
-  const sectionRef = useRef<HTMLElement>(null);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const setNavTheme = useUIStore((state) => state.setNavTheme);
 
-  const targetProgress = useRef(0);
-  const currentProgress = useRef(0);
-  const animationFrame = useRef<number | null>(null);
-
-  const [progress, setProgress] = useState(0);
-
+  // Sync nav theme with active slide
   useEffect(() => {
-    const handleScroll = () => {
-      if (!sectionRef.current) return;
+    setNavTheme(slides[activeSlide].theme);
+  }, [activeSlide, setNavTheme]);
 
-      const rect = sectionRef.current.getBoundingClientRect();
-
-      const scrollableDistance =
-        sectionRef.current.offsetHeight - window.innerHeight;
-
-      const newProgress = Math.min(
-        1,
-        Math.max(0, -rect.top / scrollableDistance)
-      );
-
-      targetProgress.current = newProgress;
-    };
-
-    const animate = () => {
-      const difference =
-        targetProgress.current - currentProgress.current;
-
-      currentProgress.current += difference * 0.09;
-
-      if (Math.abs(difference) < 0.0001) {
-        currentProgress.current = targetProgress.current;
-      }
-
-      setProgress(currentProgress.current);
-
-      animationFrame.current = requestAnimationFrame(animate);
-    };
-
-    window.addEventListener("scroll", handleScroll, {
-      passive: true,
-    });
-
-    handleScroll();
-
-    animationFrame.current = requestAnimationFrame(animate);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-
-      if (animationFrame.current) {
-        cancelAnimationFrame(animationFrame.current);
-      }
-    };
+  // Autoplay functionality
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveSlide((current) => (current + 1) % slides.length);
+    }, 6000);
+    return () => clearInterval(timer);
   }, []);
 
-  /*
-    3 slides = 0vw → 200vw
-  */
-  const horizontalOffset =
-    progress * (slides.length - 1) * 100;
+  const handlePrev = () => {
+    setActiveSlide((current) => (current - 1 + slides.length) % slides.length);
+  };
 
-  /*
-    Determine which collection is currently active.
-  */
-  const activeSlide = Math.min(
-    slides.length - 1,
-    Math.floor(progress * slides.length)
-  );
+  const handleNext = () => {
+    setActiveSlide((current) => (current + 1) % slides.length);
+  };
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative h-[300vh] bg-black"
-    >
-      <div className="sticky top-0 h-screen overflow-hidden">
-
-        {/* MOVING HERO TRACK */}
-        <div
-          className="flex h-full will-change-transform"
-          style={{
-            transform: `translate3d(-${horizontalOffset}vw, 0, 0)`,
-          }}
-        >
-          {slides.map((slide) => (
-            <article
-              key={slide.number}
-              className="relative h-full w-screen flex-shrink-0 overflow-hidden"
-            >
-              {/* Image */}
-              <div className="absolute inset-0">
-                <img
-                  src={slide.image}
-                  alt={slide.label}
-                  className="h-full w-full object-cover"
-                />
-
-                <div className="absolute inset-0 bg-black/30" />
-              </div>
-
-              {/* Slide Content */}
-              <div className="relative z-10 flex h-full flex-col justify-between px-6 py-10 text-white sm:px-10 sm:py-14 lg:px-16 lg:py-16">
-
-                {/* Main typography */}
-                <div className="mt-24 max-w-[1200px]">
-                  <p className="mb-5 text-[10px] uppercase tracking-[0.35em] sm:text-xs">
-                    {slide.eyebrow}
-                  </p>
-
-                  <h1 className="text-[clamp(4rem,10vw,9.5rem)] font-black uppercase leading-[0.78] tracking-[-0.075em]">
-                    {slide.title.map((line) => (
-                      <span
-                        key={line}
-                        className="block"
-                      >
-                        {line}
-                      </span>
-                    ))}
-                  </h1>
-                </div>
-
-                {/* Bottom */}
-                <div className="flex items-end justify-between gap-8">
-                  <p className="hidden max-w-md text-xs leading-6 text-white/80 sm:block">
-                    {slide.description}
-                  </p>
-
-                  <a
-                    href="#new-arrivals"
-                    className="group flex shrink-0 items-center gap-4 border border-white px-6 py-4 text-[9px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:bg-white hover:text-black sm:px-8"
-                  >
-                    Explore Collection
-
-                    <ArrowDownRight
-                      size={16}
-                      strokeWidth={1.5}
-                      className="transition-transform duration-300 group-hover:rotate-[-45deg]"
-                    />
-                  </a>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        {/* FIXED COLLECTION INDICATOR */}
-        <div className="pointer-events-none absolute left-6 top-10 z-30 flex items-center gap-3 text-white sm:left-10 sm:top-14 lg:left-16 lg:top-16">
-          <span className="h-px w-8 bg-white" />
-
-          <span className="text-[10px] uppercase tracking-[0.3em] sm:text-xs">
-            {slides[activeSlide].label}
-          </span>
-        </div>
-
-        {/* FIXED SLIDE NUMBER */}
-        <div className="pointer-events-none absolute right-6 top-10 z-30 text-[10px] tracking-[0.2em] text-white sm:right-10 sm:top-14 lg:right-16 lg:top-16">
-          {slides[activeSlide].number} / 03
-        </div>
-
-        {/* Progress indicators */}
-        <div className="absolute bottom-7 left-6 z-30 flex items-center gap-3 sm:left-10 lg:left-16">
-          {slides.map((slide, index) => (
-            <div
-              key={slide.number}
-              className="relative h-[2px] w-10 overflow-hidden bg-white/30"
-            >
-              <div
-                className="absolute inset-y-0 left-0 bg-white transition-[width] duration-100"
-                style={{
-                  width:
-                    index < activeSlide
-                      ? "100%"
-                      : index === activeSlide
-                        ? `${Math.max(
-                            15,
-                            Math.min(
-                              100,
-                              (progress * slides.length - index) * 100
-                            )
-                          )}%`
-                        : "0%",
-                }}
+    <section className="relative w-full h-[100vh] overflow-hidden bg-[#111111]">
+      
+      {/* IMAGES & CROSSFADE */}
+      {slides.map((slide, index) => {
+        const isActive = index === activeSlide;
+        return (
+          <div 
+            key={slide.number}
+            className={`absolute inset-0 transition-opacity duration-[1400ms] ease-in-out ${isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"}`}
+          >
+            <div className={`w-full h-full transform transition-transform duration-[6000ms] ease-out ${isActive ? "scale-100" : "scale-[1.03]"}`}>
+              <Image 
+                src={slide.image} 
+                alt={slide.title.join(" ")}
+                fill
+                priority={index === 0}
+                className="object-cover object-center lg:object-[center_20%]"
+                sizes="100vw"
+                quality={100}
+                unoptimized={true}
               />
+              {/* Optional very subtle gradient overlay for text readability based on theme */}
+              <div className={`absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent ${slide.theme === 'light' ? 'opacity-100' : 'opacity-0'}`} />
             </div>
+          </div>
+        );
+      })}
+
+      {/* FOREGROUND CONTENT */}
+      <div className="absolute inset-0 z-20 pointer-events-none">
+        {slides.map((slide, index) => {
+          const isActive = index === activeSlide;
+          const isDarkTheme = slide.theme === "dark";
+          const textColor = isDarkTheme ? "text-[#111111]" : "text-[#F5F2EC]";
+          
+          return (
+            <div 
+              key={`content-${slide.number}`}
+              className={`absolute inset-0 flex flex-col justify-center px-6 md:px-[75px] transition-all duration-1000 delay-300 ${isActive ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none"}`}
+            >
+              <div className={`max-w-[450px] lg:ml-[2vw] ${textColor}`}>
+                
+                {/* EYEBROW */}
+                <p className="text-[10px] md:text-[11px] font-[500] uppercase tracking-[0.3em] mb-6">
+                  {slide.eyebrow}
+                </p>
+
+                {/* TITLE */}
+                <h1 
+                  className="font-black uppercase leading-[0.85] tracking-[-0.06em] mb-8"
+                  style={{ fontSize: slide.titleSize ?? "clamp(64px,7vw,110px)" }}
+                >
+                  {slide.title.map((line) => (
+                    <span key={line} className="block">{line}</span>
+                  ))}
+                </h1>
+
+                {/* DESCRIPTION */}
+                <p className={`text-[13px] md:text-[14px] leading-[1.6] mb-10 max-w-[380px] ${isDarkTheme ? "text-[#111111]/80" : "text-[#F5F2EC]/80"}`}>
+                  {slide.description}
+                </p>
+
+                {/* BUTTONS */}
+                <div className="flex flex-col sm:flex-row gap-4">
+                  {slide.buttons.map((btn, i) => {
+                    const isPrimary = btn.primary;
+                    // Button styling logic based on theme and primary/secondary
+                    let btnClasses = "group flex items-center justify-center gap-3 h-[48px] md:h-[50px] px-7 text-[10px] md:text-[11px] font-[600] uppercase tracking-[0.12em] transition-all duration-300 rounded-[1px]";
+                    
+                    if (isDarkTheme) {
+                      if (isPrimary) {
+                        btnClasses += " bg-[#111111] text-[#F5F2EC] hover:bg-[#111111]/80";
+                      } else {
+                        btnClasses += " bg-transparent text-[#111111] border border-[#111111] hover:bg-[#111111] hover:text-[#F5F2EC]";
+                      }
+                    } else {
+                      if (isPrimary) {
+                        btnClasses += " bg-[#F5F2EC] text-[#111111] hover:bg-white";
+                      } else {
+                        btnClasses += " bg-transparent text-[#F5F2EC] border border-[#F5F2EC] hover:bg-[#F5F2EC] hover:text-[#111111]";
+                      }
+                    }
+
+                    return (
+                      <Link key={i} href={btn.href} className={btnClasses}>
+                        {btn.label}
+                        <ArrowRight size={14} strokeWidth={1.5} className="transition-transform duration-300 group-hover:translate-x-1" />
+                      </Link>
+                    );
+                  })}
+                </div>
+
+              </div>
+            </div>
+          );
+        })}
+
+        {/* UI OVERLAYS - Always visible */}
+        
+
+
+
+        {/* SCROLL INDICATOR (Bottom Center) */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-auto">
+          {slides.map((slide, index) => (
+             <div 
+               key={`scroll-${slide.number}`}
+               className={`flex flex-col items-center gap-2 absolute bottom-0 left-1/2 -translate-x-1/2 transition-opacity duration-700 whitespace-nowrap
+               ${slide.theme === 'dark' ? 'text-[#111111]' : 'text-[#F5F2EC]'}
+               ${index === activeSlide ? 'opacity-100' : 'opacity-0'}`}
+             >
+               <span className="text-[9px] uppercase tracking-[0.25em] font-medium">Scroll to explore</span>
+               <ArrowDown size={14} strokeWidth={1.5} className="animate-bounce" />
+             </div>
           ))}
         </div>
 
-        {/* Scroll hint */}
-        <div className="absolute bottom-7 right-6 z-30 hidden items-center gap-3 text-[9px] uppercase tracking-[0.25em] text-white sm:flex">
-          <span>Scroll to explore</span>
-          <ArrowDownRight size={14} strokeWidth={1.2} />
+        {/* BOTTOM RIGHT CONTROLS & PROGRESS */}
+        <div className="absolute bottom-8 right-6 md:right-[75px] flex items-center gap-12 pointer-events-auto">
+          
+          {/* Progress Lines */}
+          <div className="flex gap-2">
+            {slides.map((slide, index) => {
+               const isActive = index === activeSlide;
+               const currentTheme = slides[activeSlide].theme;
+               const bgColor = currentTheme === 'dark' ? 'bg-[#111111]' : 'bg-[#F5F2EC]';
+               
+               return (
+                 <div key={`progress-${index}`} className={`h-[1px] transition-all duration-500 ease-out ${isActive ? `w-8 ${bgColor}` : `w-4 ${bgColor}/30`}`} />
+               );
+            })}
+          </div>
+
+          {/* Prev / Next */}
+          <div className="flex items-center gap-4">
+             <button 
+               onClick={handlePrev} 
+               className={`transition-opacity hover:opacity-50 ${slides[activeSlide].theme === 'dark' ? 'text-[#111111]' : 'text-[#F5F2EC]'}`}
+               aria-label="Previous slide"
+             >
+               <ArrowLeft size={20} strokeWidth={1.2} />
+             </button>
+             <button 
+               onClick={handleNext} 
+               className={`transition-opacity hover:opacity-50 ${slides[activeSlide].theme === 'dark' ? 'text-[#111111]' : 'text-[#F5F2EC]'}`}
+               aria-label="Next slide"
+             >
+               <ArrowRight size={20} strokeWidth={1.2} />
+             </button>
+          </div>
         </div>
+
       </div>
     </section>
   );

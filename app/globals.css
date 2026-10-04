@@ -1,8 +1,17 @@
 @import "tailwindcss";
 
+@theme {
+  --color-cream: #F5F2EC;
+  --color-primary-black: #11110F;
+  --color-secondary-text: #5F5B54;
+  --color-border: #D8D3CA;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-editorial: var(--font-cormorant), ui-serif, Georgia, serif;
+}
+
 :root {
-  --background: #f5f3ee;
-  --foreground: #0a0a0a;
+  --background: var(--color-cream);
+  --foreground: var(--color-primary-black);
 }
 
 * {
@@ -17,12 +26,12 @@ body {
   margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
 }
 
 ::selection {
-  background: #0a0a0a;
-  color: #f5f3ee;
+  background: var(--color-primary-black);
+  color: var(--color-cream);
 }
 
 button,
@@ -37,6 +46,7 @@ button {
 img {
   display: block;
 }
+
 /* Hide scrollbar while keeping horizontal scrolling */
 .scrollbar-hide {
   -ms-overflow-style: none;

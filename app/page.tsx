@@ -1,5 +1,7 @@
 import CategoryCard from "@/components/CategoryCard";
 import Hero from "@/components/Hero";
+import HisHer from "@/components/HisHer";
+import Latest from "@/components/Latest";
 import ProductCarousel from "@/components/ProductCarousel";
 import clientPromise from "@/lib/mongodb";
 import type { Product } from "@/data/products";
@@ -82,6 +84,21 @@ export default async function Home() {
       ===================================== */}
 
       <Hero />
+
+      {/* WHITE DIVIDER LINE */}
+      <div className="h-px w-full bg-white" />
+
+      {/* =====================================
+          HIS / HER
+      ===================================== */}
+
+      <HisHer />
+
+      {/* =====================================
+          THE LATEST
+      ===================================== */}
+
+      <Latest />
 
      {/* =====================================
     BRAND INTRO

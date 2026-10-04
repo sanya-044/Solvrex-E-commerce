@@ -15,12 +15,50 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
+import { usePathname } from "next/navigation";
+import { useUIStore } from "@/store/uiStore";
+
+const MEGA_MENUS = {
+  men: {
+    categories: [
+      {
+        title: "CLOTHING",
+        links: ["T-Shirts", "Shirts", "Trousers", "Outerwear"],
+      },
+      {
+        title: "FEATURED",
+        links: ["New Arrivals", "Best Sellers", "Essentials", "Trending"],
+      },
+    ],
+  },
+  women: {
+    categories: [
+      {
+        title: "CLOTHING",
+        links: ["Tops", "Dresses", "Trousers", "Outerwear"],
+      },
+      {
+        title: "FEATURED",
+        links: ["New Arrivals", "Best Sellers", "Essentials", "Trending"],
+      },
+    ],
+  },
+};
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+  const navTheme = useUIStore((state) => state.navTheme);
+  
+  const isDarkText = !isHome || navTheme === "dark";
+  const textColorClass = isDarkText ? "text-[#111111]" : "text-white/95";
+  const logoColorClass = isDarkText ? "text-[#050505]" : "text-white";
+  const cartBadgeClass = isDarkText ? "bg-[#111111] text-white" : "bg-white/95 text-[#111111]";
+
   const { data: session, status } = useSession();
   const totalItems = useCartStore((state) => state.getTotalItems());
   const wishlistCount = useWishlistStore((state) => state.items.length);
-  
+
   const mounted = useSyncExternalStore(
     () => () => {},
     () => true,
@@ -64,95 +102,200 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ANNOUNCEMENT */}
-      <div className="bg-black px-4 py-2 text-center text-[9px] font-medium uppercase tracking-[0.3em] text-white sm:text-[10px]">
-        Free shipping on orders above ₹599
-      </div>
-
       {/* NAVBAR HEADER */}
-      <header className="sticky top-0 z-50 border-b border-black/10 bg-[#f5f3ee]/95 backdrop-blur-md">
-        <div className="relative mx-auto flex h-[72px] max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">
+      <header 
+        className={`top-0 z-50 w-full transition-colors duration-500 ${isHome ? "fixed bg-transparent" : "sticky bg-[#F4F1EB]"}`}
+        onMouseLeave={() => setActiveMenu(null)}
+      >
+        {isHome && (
+          <div 
+            className="absolute inset-x-0 top-0 h-[140px] pointer-events-none transition-opacity duration-500 -z-10"
+            style={{
+              background: 'linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.08) 45%, rgba(0,0,0,0) 100%)',
+              opacity: navTheme === 'light' ? 1 : 0
+            }}
+          />
+        )}
+        <div className={`flex h-[64px] w-full items-center justify-between px-5 md:px-[75px] ${textColorClass} transition-colors duration-500`}>
           
-          {/* MOBILE MENU BUTTON */}
-          <button
-            type="button"
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="lg:hidden"
-            aria-label="Menu"
-          >
-            {menuOpen ? <X size={21} strokeWidth={1.5} /> : <Menu size={21} strokeWidth={1.5} />}
-          </button>
+          {/* MOBILE LEFT: MENU */}
+          <div className="flex items-center lg:hidden">
+            <button
+              type="button"
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Menu"
+              className="transition-opacity hover:opacity-60"
+            >
+              {menuOpen ? <X size={24} strokeWidth={1.5} /> : <Menu size={24} strokeWidth={1.5} />}
+            </button>
+          </div>
 
-          {/* DESKTOP NAVIGATION */}
-          <nav className="hidden items-center gap-8 lg:flex">
-            {(["men", "women"] as const).map((genderKey) => (
-              <button
-                key={genderKey}
-                type="button"
-                onClick={() => setActiveMenu(activeMenu === genderKey ? null : genderKey)}
-                className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-[0.16em] transition-opacity hover:opacity-50"
-              >
-                {genderKey.charAt(0).toUpperCase() + genderKey.slice(1)}
-                <ChevronDown
-                  size={12}
-                  className={`transition-transform ${activeMenu === genderKey ? "rotate-180" : ""}`}
-                />
-              </button>
-            ))}
-            <Link href="/shop" className="text-[11px] font-medium uppercase tracking-[0.16em] transition-opacity hover:opacity-50">
-              New Arrivals
+          {/* DESKTOP LEFT: LOGO & NAVIGATION */}
+          <div className="hidden lg:flex items-center h-full">
+            {/* LOGO */}
+            <Link 
+              href="/" 
+              style={{ fontFamily: "'Arial Black', Arial, Helvetica, sans-serif", fontWeight: 800, letterSpacing: "-0.045em" }}
+              className={`text-[28px] ${logoColorClass} uppercase mr-[70px] leading-none transition-colors duration-500`}
+            >
+              VELMORI
             </Link>
-            <Link href="/shop" className="text-[11px] font-medium uppercase tracking-[0.16em] transition-opacity hover:opacity-50">
-              Collections
+
+            {/* NAVIGATION */}
+            <nav className="flex items-center gap-[30px] h-full">
+              {(["men", "women"] as const).map((genderKey) => (
+                <div 
+                  key={genderKey}
+                  className="relative h-full flex items-center group cursor-pointer"
+                  onMouseEnter={() => setActiveMenu(genderKey)}
+                >
+                  <button
+                    type="button"
+                    className="text-[11.5px] font-[600] uppercase tracking-[0.08em] transition-opacity hover:opacity-60"
+                  >
+                    {genderKey}
+                  </button>
+                  {/* Invisible hover bridge */}
+                  {activeMenu === genderKey && (
+                    <div className="absolute top-[64px] left-0 w-full h-[2px] bg-transparent" />
+                  )}
+                </div>
+              ))}
+              <Link href="/shop" className="text-[11.5px] font-[600] uppercase tracking-[0.08em] transition-opacity hover:opacity-60">
+                New Arrivals
+              </Link>
+              <Link href="/shop" className="text-[11.5px] font-[600] uppercase tracking-[0.08em] transition-opacity hover:opacity-60">
+                Collections
+              </Link>
+              <Link href="/about" className="text-[11.5px] font-[600] uppercase tracking-[0.08em] transition-opacity hover:opacity-60">
+                About
+              </Link>
+            </nav>
+          </div>
+
+          {/* MOBILE CENTER: LOGO */}
+          <div className="flex justify-center lg:hidden absolute left-1/2 -translate-x-1/2">
+            <Link 
+              href="/" 
+              style={{ fontFamily: "'Arial Black', Arial, Helvetica, sans-serif", fontWeight: 800, letterSpacing: "-0.045em" }}
+              className={`text-[26px] ${logoColorClass} uppercase leading-none transition-colors duration-500`}
+            >
+              VELMORI
             </Link>
-          </nav>
+          </div>
 
-          {/* LOGO */}
-          <Link href="/" className="absolute left-1/2 -translate-x-1/2 text-[25px] font-black tracking-[-0.07em] sm:text-[29px]">
-            VELMORI
-          </Link>
-
-          {/* RIGHT ACTIONS */}
-          <div className="ml-auto flex items-center gap-4 sm:gap-5">
-            <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
-              <Search size={20} strokeWidth={1.4} className="transition-opacity hover:opacity-50" />
+          {/* RIGHT: ACTIONS */}
+          <div className="flex items-center justify-end gap-[24px] h-full">
+            <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search" className="hidden lg:flex items-center justify-center transition-opacity hover:opacity-60">
+              <Search size={21} strokeWidth={1.5} />
             </button>
 
             <Link
-                href={status === "loading" ? "/login" : isAuthenticated ? "/account" : "/login"}
-                aria-label={isAuthenticated ? "Account" : "Login"}
-                className="flex items-center gap-2 transition-opacity hover:opacity-50"
-              >
-                <UserRound size={20} strokeWidth={1.4} />
-                <span className="hidden xl:block text-[9px] font-bold uppercase tracking-[0.16em]">
-                  {status === "loading" ? "Login" : isAuthenticated ? session.user?.name || "Account" : "Login"}
-                </span>
-              </Link>
-
-            <Link href="/wishlist" aria-label="Wishlist" className="relative hidden sm:block">
-              <Heart size={20} strokeWidth={1.4} className="transition-opacity hover:opacity-50" />
-              {wishlistCount > 0 && (
-                <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-black px-1 text-[8px] text-white">
-                  {wishlistCount}
-                </span>
-              )}
+              href={status === "loading" ? "/login" : isAuthenticated ? "/account" : "/login"}
+              aria-label={isAuthenticated ? "Account" : "Login"}
+              className="hidden lg:flex items-center justify-center transition-opacity hover:opacity-60"
+            >
+              <UserRound size={21} strokeWidth={1.5} />
             </Link>
 
-            <Link href="/cart" aria-label="Shopping bag" className="relative">
-              <ShoppingBag size={20} strokeWidth={1.4} className="transition-opacity hover:opacity-50" />
-              <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-black px-1 text-[8px] text-white">
+            <Link href="/wishlist" aria-label="Wishlist" className="hidden lg:flex items-center justify-center transition-opacity hover:opacity-60">
+              <Heart size={21} strokeWidth={1.5} />
+            </Link>
+
+            <Link href="/cart" aria-label="Shopping bag" className="relative flex items-center justify-center transition-opacity hover:opacity-60">
+              <ShoppingBag size={21} strokeWidth={1.5} />
+              <span className={`absolute -right-2 -top-1.5 flex h-[14px] min-w-[14px] items-center justify-center rounded-full px-1 text-[8px] font-medium transition-colors duration-500 ${cartBadgeClass}`}>
                 {mounted ? totalItems : 0}
               </span>
             </Link>
           </div>
         </div>
+
+        {/* DESKTOP MEGA MENU */}
+        {activeMenu && (
+          <div
+            className="absolute left-0 right-0 top-[64px] z-40 hidden bg-[#F4F1EB] shadow-sm lg:block border-t border-black/5"
+          >
+            <div className="mx-auto flex gap-20 px-[75px] py-12">
+              {MEGA_MENUS[activeMenu].categories.map((category) => (
+                <div key={category.title} className="w-48">
+                  <h3 className="mb-6 text-[11px] font-bold uppercase tracking-[0.15em] text-[#111111]">
+                    {category.title}
+                  </h3>
+                  <ul className="flex flex-col gap-4">
+                    {category.links.map((link) => (
+                      <li key={link}>
+                        <Link
+                          href={`/category/${activeMenu}`}
+                          className="text-[12.5px] font-medium text-[#111111]/70 transition-colors hover:text-[#111111] hover:underline underline-offset-4"
+                          onClick={() => setActiveMenu(null)}
+                        >
+                          {link}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+              
+              <div className="ml-auto w-[300px] overflow-hidden bg-black/5 flex items-center justify-center">
+                 {/* Editorial image placeholder */}
+                 <span className="text-[#111111]/50 text-xs uppercase tracking-widest font-medium">Editorial Feature</span>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
+
+      {/* MOBILE FULLSCREEN MENU */}
+      {menuOpen && (
+        <div className="fixed inset-0 top-[64px] z-40 h-[calc(100vh-64px)] w-full overflow-y-auto bg-[#F4F1EB] text-[#111111] lg:hidden">
+          <nav className="flex flex-col px-6 py-8 gap-8">
+            <ul className="flex flex-col gap-6">
+              <li>
+                <Link href="/category/men" onClick={() => setMenuOpen(false)} className="text-xl font-medium uppercase tracking-[0.08em]">Men</Link>
+              </li>
+              <li>
+                <Link href="/category/women" onClick={() => setMenuOpen(false)} className="text-xl font-medium uppercase tracking-[0.08em]">Women</Link>
+              </li>
+              <li>
+                <Link href="/shop" onClick={() => setMenuOpen(false)} className="text-xl font-medium uppercase tracking-[0.08em]">New Arrivals</Link>
+              </li>
+              <li>
+                <Link href="/shop" onClick={() => setMenuOpen(false)} className="text-xl font-medium uppercase tracking-[0.08em]">Collections</Link>
+              </li>
+            </ul>
+
+            <div className="h-[1px] w-full bg-[#111111]/10"></div>
+
+            <ul className="flex flex-col gap-5">
+              <li>
+                <button type="button" onClick={() => { setMenuOpen(false); setSearchOpen(true); }} className="text-sm font-medium uppercase tracking-[0.1em] text-[#111111]/70">Search</button>
+              </li>
+              <li>
+                <Link href={status === "loading" ? "/login" : isAuthenticated ? "/account" : "/login"} onClick={() => setMenuOpen(false)} className="text-sm font-medium uppercase tracking-[0.1em] text-[#111111]/70">
+                  {status === "loading" ? "Account" : isAuthenticated ? session.user?.name || "Account" : "Account"}
+                </Link>
+              </li>
+              <li>
+                <Link href="/wishlist" onClick={() => setMenuOpen(false)} className="text-sm font-medium uppercase tracking-[0.1em] text-[#111111]/70">Wishlist ({wishlistCount})</Link>
+              </li>
+              <li>
+                <Link href="/about" onClick={() => setMenuOpen(false)} className="text-sm font-medium uppercase tracking-[0.1em] text-[#111111]/70">About</Link>
+              </li>
+              <li>
+                <Link href="/contact" onClick={() => setMenuOpen(false)} className="text-sm font-medium uppercase tracking-[0.1em] text-[#111111]/70">Contact</Link>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      )}
 
       {/* SEARCH OVERLAY */}
       {searchOpen && (
-        <div className="fixed inset-0 z-[9999] h-screen w-screen overflow-y-auto bg-[#f5f3ee] text-black">
-          <div className="sticky top-0 z-10 flex h-[72px] items-center justify-between border-b border-black/10 bg-[#f5f3ee] px-5 sm:px-8 lg:px-12">
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Search</span>
+        <div className="fixed inset-0 z-[9999] h-screen w-screen overflow-y-auto bg-[#F4F1EB] text-[#111111]">
+          <div className="sticky top-0 z-10 flex h-[64px] items-center justify-between border-b border-[#111111]/10 bg-[#F4F1EB] px-5 sm:px-[75px]">
+            <span className="text-[11px] font-bold uppercase tracking-[0.15em]">Search</span>
             <button
               type="button"
               onClick={() => {
@@ -160,34 +303,34 @@ export default function Navbar() {
                 setSearchQuery("");
               }}
               aria-label="Close search"
-              className="flex h-10 w-10 items-center justify-center transition-opacity hover:opacity-50"
+              className="flex h-10 w-10 items-center justify-center transition-opacity hover:opacity-60"
             >
-              <X size={22} strokeWidth={1.4} />
+              <X size={26} strokeWidth={1.2} />
             </button>
           </div>
 
-          <div className="mx-auto max-w-[1600px] px-5 py-12 sm:px-8 lg:px-12 lg:py-16">
-            <div className="border-b border-black">
+          <div className="mx-auto max-w-[1200px] px-5 py-12 sm:px-[75px] lg:py-20">
+            <div className="border-b border-[#111111] pb-4">
               <input
                 autoFocus
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="What are you looking for?"
-                className="w-full border-0 bg-transparent p-0 text-3xl font-medium tracking-[-0.05em] text-black outline-none placeholder:text-black/20 sm:text-5xl lg:text-7xl"
+                className="w-full border-0 bg-transparent p-0 text-3xl font-medium text-[#111111] outline-none placeholder:text-[#111111]/30 sm:text-5xl lg:text-6xl font-editorial tracking-tight"
               />
             </div>
 
             {!searchQuery && (
-              <div className="pt-12">
-                <p className="mb-6 text-[9px] font-bold uppercase tracking-[0.3em] text-black/40">Trending Searches</p>
-                <div className="flex flex-wrap gap-2">
+              <div className="pt-16">
+                <p className="mb-8 text-[11px] font-bold uppercase tracking-[0.15em] text-[#111111]/70">Trending Searches</p>
+                <div className="flex flex-wrap gap-3">
                   {["T-Shirts", "Hoodies", "Shirts", "Bottomwear", "New", "Bestseller"].map((term) => (
                     <button
                       key={term}
                       type="button"
                       onClick={() => setSearchQuery(term)}
-                      className="border border-black/15 px-5 py-3 text-[9px] uppercase tracking-[0.15em] transition-all hover:border-black hover:bg-black hover:text-white"
+                      className="border border-[#111111]/20 bg-white/50 px-6 py-3 text-[11px] uppercase tracking-[0.12em] transition-all hover:border-[#111111] hover:bg-[#111111] hover:text-[#F4F1EB]"
                     >
                       {term}
                     </button>
@@ -197,16 +340,16 @@ export default function Navbar() {
             )}
 
             {searchQuery && (
-              <div className="pt-10">
-                <div className="mb-7 flex items-center justify-between">
-                  <p className="text-[9px] font-bold uppercase tracking-[0.25em]">Search Results</p>
-                  <span className="text-[9px] uppercase tracking-[0.15em] text-black/40">
+              <div className="pt-16">
+                <div className="mb-10 flex items-center justify-between">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.15em]">Search Results</p>
+                  <span className="text-[11px] uppercase tracking-[0.15em] text-[#111111]/70">
                     {searchResults.length} {searchResults.length === 1 ? "Result" : "Results"}
                   </span>
                 </div>
 
                 {searchResults.length > 0 ? (
-                  <div className="grid grid-cols-2 gap-x-3 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
                     {searchResults.map((product) => (
                       <Link
                         key={product.id}
@@ -215,61 +358,36 @@ export default function Navbar() {
                           setSearchOpen(false);
                           setSearchQuery("");
                         }}
-                        className="group"
+                        className="group flex flex-col"
                       >
-                        <div className="relative aspect-[3/4] overflow-hidden bg-[#e9e6df]">
-                          <img src={product.image} alt={product.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+                        <div className="relative aspect-[3/4] overflow-hidden bg-black/5">
+                          {product.image && (
+                            <img src={product.image} alt={product.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
+                          )}
                           {product.badge && (
-                            <span className="absolute left-3 top-3 bg-white px-2 py-1 text-[8px] uppercase tracking-[0.12em]">
+                            <span className="absolute left-3 top-3 bg-[#111111] px-2 py-1 text-[9px] uppercase tracking-[0.15em] text-white">
                               {product.badge}
                             </span>
                           )}
                         </div>
-                        <div className="mt-4">
-                          <p className="text-[10px] font-bold uppercase tracking-[0.02em]">{product.name}</p>
-                          <p className="mt-1 text-[9px] uppercase tracking-[0.15em] text-black/40">{product.category}</p>
-                          <p className="mt-2 text-sm font-medium">₹{product.price.toLocaleString("en-IN")}</p>
+                        <div className="mt-5 flex flex-col flex-1">
+                          <p className="text-[12px] font-bold uppercase tracking-[0.05em] text-[#111111]">{product.name}</p>
+                          <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-[#111111]/70">{product.category}</p>
+                          <p className="mt-3 text-sm font-medium text-[#111111]">₹{product.price.toLocaleString("en-IN")}</p>
                         </div>
                       </Link>
                     ))}
                   </div>
                 ) : (
-                  <div className="flex min-h-[350px] items-center justify-center">
+                  <div className="flex min-h-[400px] items-center justify-center">
                     <div className="text-center">
-                      <p className="text-4xl font-black uppercase tracking-[-0.06em]">Nothing Found</p>
-                      <p className="mt-4 text-sm text-black/40">Try another search.</p>
+                      <p className="text-4xl sm:text-5xl font-editorial uppercase tracking-tight text-[#111111]">Nothing Found</p>
+                      <p className="mt-4 text-sm text-[#111111]/70">Try another search term.</p>
                     </div>
                   </div>
                 )}
               </div>
             )}
-          </div>
-        </div>
-      )}
-
-      {/* DESKTOP MEGA MENU */}
-      {activeMenu && (
-        <div
-          className="fixed left-0 right-0 top-[98px] z-45 hidden border-b border-black/10 bg-[#f5f3ee] shadow-[0_15px_40px_rgba(0,0,0,0.06)] lg:block"
-          onMouseLeave={() => setActiveMenu(null)}
-        >
-          <div className="mx-auto max-w-[1600px] px-12 py-10">
-            <div className="grid grid-cols-4 gap-12">
-              <div>
-                <p className="mb-5 text-[9px] font-bold uppercase tracking-[0.25em] text-black/40">Clothing</p>
-                <div className="flex flex-col gap-3">
-                  <Link href={`/category/${activeMenu}`} className="text-sm hover:opacity-50">
-                    {activeMenu === "men" ? "T-Shirts" : "Tops"}
-                  </Link>
-                  <Link href={`/category/${activeMenu}`} className="text-sm hover:opacity-50">
-                    {activeMenu === "men" ? "Shirts" : "Dresses"}
-                  </Link>
-                  <Link href={`/category/${activeMenu}`} className="text-sm hover:opacity-50">Hoodies</Link>
-                  <Link href={`/category/${activeMenu}`} className="text-sm hover:opacity-50">Bottomwear</Link>
-                </div>
-              </div>
-              {/* Additional columns can go here */}
-            </div>
           </div>
         </div>
       )}
