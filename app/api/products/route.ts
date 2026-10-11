@@ -18,17 +18,31 @@ export async function GET() {
     }
 
     const formattedProducts = products.map((product) => ({
-      id: Number(product.id),
-      name: String(product.name || ""),
-      category: String(product.category || ""),
-      gender: String(product.gender || ""),
-      price: Number(product.price || 0),
-      originalPrice: Number(product.originalPrice || 0),
-      image: String(product.image || ""),
-      description: String(product.description || ""),
-      sizes: Array.isArray(product.sizes) ? product.sizes : [],
-      ...(product.badge ? { badge: String(product.badge) } : {}),
-    }));
+  id: Number(product.id),
+  name: String(product.name || ""),
+  category: String(product.category || ""),
+  gender: String(product.gender || ""),
+  price: Number(product.price || 0),
+  originalPrice: Number(product.originalPrice || 0),
+
+  image: String(product.image || ""),
+
+  // IMPORTANT
+  transparentImage: product.transparentImage
+    ? String(product.transparentImage)
+    : String(product.image || ""),
+
+  description: String(product.description || ""),
+  sizes: Array.isArray(product.sizes)
+    ? product.sizes
+    : [],
+
+  ...(product.badge
+    ? {
+        badge: String(product.badge),
+      }
+    : {}),
+}));
 
     return NextResponse.json(formattedProducts);
   } catch (error) {

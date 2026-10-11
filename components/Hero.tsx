@@ -1,56 +1,279 @@
-import Link from "next/link";
+"use client";
 
-const collageTiles = [
-  "collage-tile-one",
-  "collage-tile-two",
-  "collage-tile-three",
-  "collage-tile-four",
-  "collage-tile-five",
-  "collage-tile-six",
-];
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+
+type Product = {
+  id: number | string;
+  name: string;
+  category: string;
+  gender?: "Men" | "Women" | "Unisex";
+  price: number;
+  originalPrice: number;
+  image: string;
+  transparentImage?: string | null;
+  description?: string;
+  sizes?: string[];
+  badge?: string;
+};
 
 export default function Hero() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [active, setActive] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [isChanging, setIsChanging] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadProducts() {
+      try {
+        const response = await fetch("/api/products");
+
+        if (!response.ok) {
+          throw new Error("Could not load products");
+        }
+
+        const data = await response.json();
+
+        if (!Array.isArray(data)) {
+          throw new Error("Unexpected products API response");
+        }
+
+        // Only display products with a transparent PNG.
+        const availableProducts = data.filter(
+          (item: Product) =>
+            typeof item.transparentImage === "string" &&
+            item.transparentImage.trim() !== ""
+        );
+
+        if (!cancelled) {
+          setProducts(availableProducts);
+        }
+      } catch (error) {
+        console.error("Failed to load hero products:", error);
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadProducts();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const changeProduct = (nextIndex: number) => {
+    if (
+      isChanging ||
+      nextIndex === active ||
+      nextIndex < 0 ||
+      nextIndex >= products.length
+    ) {
+      return;
+    }
+
+    setIsChanging(true);
+
+    // Fade out the current image before changing the product.
+    window.setTimeout(() => {
+      setActive(nextIndex);
+
+      // Allow the new image to render before fading it in.
+      window.setTimeout(() => {
+        setIsChanging(false);
+      }, 50);
+    }, 250);
+  };
+
+  const nextProduct = () => {
+    if (products.length < 2) return;
+    changeProduct((active + 1) % products.length);
+  };
+
+  const previousProduct = () => {
+    if (products.length < 2) return;
+    changeProduct((active - 1 + products.length) % products.length);
+  };
+
+  if (loading) {
+    return (
+      <section className="flex min-h-[calc(100vh-40px)] items-center justify-center bg-[#f8eeee]">
+        <p className="text-[9px] uppercase tracking-[0.4em] text-black/50">
+          Loading collection
+        </p>
+      </section>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <section className="flex min-h-[calc(100vh-40px)] items-center justify-center bg-[#f8eeee] px-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-light tracking-tight">
+            THE SHIRT COLLECTION
+          </h1>
+          <p className="mt-4 text-xs text-black/50">
+            No products with transparent images are available yet.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
+  const product = products[active];
+
+  const discount =
+    product.originalPrice > product.price &&
+    product.originalPrice > 0
+      ? Math.round(
+          ((product.originalPrice - product.price) /
+            product.originalPrice) *
+            100
+        )
+      : 0;
+
   return (
-    <div className="hero-experience relative isolate overflow-hidden bg-[#f8efee] text-[#292421]">
-      <section className="hero-sequence absolute inset-0 isolate overflow-hidden" aria-label="The Velmori jacket collection">
-        <div className="hero-model-stage pointer-events-none absolute inset-x-0 top-[3%] bottom-[2%] z-10 overflow-hidden" aria-hidden="true">
+    <section className="relative min-h-[calc(100vh-40px)] overflow-hidden bg-[#f8eeee]">
+      {/* LEFT: COLLECTION TITLE AND PRODUCT DETAILS */}
+      <div className="absolute left-[6%] top-1/2 z-20 w-[42%] max-w-[520px] -translate-y-1/2">
+        <p className="mb-5 text-[8px] uppercase tracking-[0.45em] text-black/45">
+          New Collection
+        </p>
+
+        <h1 className="text-[clamp(48px,6.2vw,100px)] font-light leading-[0.84] tracking-[-0.065em] text-black">
+          THE
+          <br />
+          SHIRT
+          <br />
+          COLLECTION
+        </h1>
+
+        <p className="mt-7 text-[9px] uppercase tracking-[0.2em] text-black/50">
+          {product.category}
+        </p>
+
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <span className="text-sm font-medium">
+            ₹{product.price.toLocaleString("en-IN")}
+          </span>
+
+          {discount > 0 && (
+            <>
+              <span className="text-[10px] text-black/40 line-through">
+                ₹{product.originalPrice.toLocaleString("en-IN")}
+              </span>
+
+              <span className="bg-black/5 px-2 py-1 text-[8px] uppercase tracking-wider text-black/60">
+                {discount}% off
+              </span>
+            </>
+          )}
+        </div>
+
+        <Link
+          href={`/product/${product.id}`}
+          className="mt-7 flex h-10 w-[145px] items-center justify-between border border-black/70 px-4 text-[8px] uppercase tracking-[0.18em] transition-colors duration-300 hover:bg-black hover:text-white"
+        >
+          View Product
+          <span className="text-xs">↘</span>
+        </Link>
+      </div>
+
+      {/* CENTER: TRANSPARENT PRODUCT PNG ONLY */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <div className="flex h-[82vh] w-[38vw] min-w-[280px] max-w-[650px] translate-x-[3vw] items-center justify-center md:h-[88vh] md:w-[42vw]">
           <img
-            src="/Images/campaign-model-base.png"
-            alt=""
-            className="hero-model-base absolute left-[58%] top-0 h-full w-auto max-w-none -translate-x-1/2 object-contain object-top"
-            fetchPriority="high"
+            key={String(product.id)}
+            src={product.transparentImage!}
+            alt={product.name}
+            draggable={false}
+            className={`h-full w-full select-none object-contain transition-all duration-500 ease-out ${
+              isChanging
+                ? "scale-[0.96] opacity-0"
+                : "scale-100 opacity-100"
+            }`}
           />
-          <img src="/Images/campaign-look-ivory.png" alt="" className="hero-look hero-look-ivory absolute left-[58%] top-0 h-full w-auto max-w-none -translate-x-1/2 object-contain object-top" />
-          <img src="/Images/campaign-look-navy.png" alt="" className="hero-look hero-look-navy absolute left-[58%] top-0 h-full w-auto max-w-none -translate-x-1/2 object-contain object-top" />
-          <img src="/Images/campaign-look-suede.png" alt="" className="hero-look hero-look-suede absolute left-[58%] top-0 h-full w-auto max-w-none -translate-x-1/2 object-contain object-top" />
         </div>
+      </div>
 
-        <div className="relative z-20 mx-auto h-full max-w-[1600px] px-5 sm:px-8 lg:px-12">
-          <div className="absolute left-5 top-[50%] max-w-[136px] sm:left-8 sm:top-[50%] sm:max-w-[170px] lg:left-12 lg:max-w-[190px]">
-            <p className="mb-3 text-[8px] uppercase tracking-[0.19em] text-[#705b58]/75 sm:mb-4 sm:text-[9px]">VELMORI · 01 / 03</p>
-            <h1 className="font-serif text-[clamp(1.35rem,2.5vw,2.15rem)] font-normal uppercase leading-[0.94] tracking-[-0.04em]">The<br />jacket<br />collection</h1>
-            <Link href="/shop?category=Outerwear" className="mt-4 inline-flex items-center gap-2 border-b border-[#292421]/50 pb-1 text-[8px] uppercase tracking-[0.15em] transition-opacity hover:opacity-55 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#292421] sm:mt-6 sm:text-[9px]">
-              View the edit <span aria-hidden="true">↗</span>
-            </Link>
-          </div>
-          <div className="absolute bottom-5 left-5 z-20 flex items-center gap-2 text-[8px] uppercase tracking-[0.15em] text-[#705b58]/70 sm:bottom-7 sm:left-8 lg:bottom-9 lg:left-12">
-            <span className="h-px w-5 bg-[#705b58]/45" /><span>Made for your everyday</span>
-          </div>
-          <div className="absolute bottom-5 right-5 z-20 text-[8px] uppercase tracking-[0.15em] text-[#705b58]/70 sm:bottom-7 sm:right-8 lg:bottom-9 lg:right-12">Spring / Summer · 2026</div>
-        </div>
-      </section>
+      {/* LEFT ARROW */}
+      <button
+        type="button"
+        onClick={previousProduct}
+        disabled={products.length < 2 || isChanging}
+        aria-label="Previous product"
+        className="absolute left-[34%] top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-black/25 bg-white/50 text-black/75 shadow-sm backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-black/50 hover:bg-white/90 hover:text-black disabled:cursor-not-allowed disabled:opacity-40 sm:left-[38%] sm:h-11 sm:w-11"
+      >
+        <ArrowLeft size={15} strokeWidth={1.5} />
+      </button>
 
-      <section className="hero-collage absolute inset-0 overflow-hidden bg-[#e9e0dc]" aria-label="Velmori editorial portrait">
-        <div className="hero-collage-frame absolute inset-0 overflow-hidden">
-          <picture className="absolute inset-0 block h-full w-full">
-            <source media="(max-width: 639px)" srcSet="/Images/campaign-collage-mobile.png" />
-            <img src="/Images/campaign-collage-landscape.png" alt="Model in a relaxed grey sweatshirt against an architectural concrete wall" className="hero-collage-image absolute inset-0 h-full w-full object-cover object-[center_top]" />
-          </picture>
-          <div className="hero-collage-tiles absolute inset-0 grid grid-cols-3 grid-rows-2" aria-hidden="true">
-            {collageTiles.map((tile) => <div key={tile} className={`hero-collage-tile ${tile}`} />)}
-          </div>
-        </div>
-      </section>
-    </div>
+      {/* RIGHT ARROW */}
+      <button
+        type="button"
+        onClick={nextProduct}
+        disabled={products.length < 2 || isChanging}
+        aria-label="Next product"
+        className="absolute left-[72%] top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-black/25 bg-white/50 text-black/75 shadow-sm backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-black/50 hover:bg-white/90 hover:text-black disabled:cursor-not-allowed disabled:opacity-40 sm:left-[62%] sm:h-11 sm:w-11"
+      >
+        <ArrowRight size={15} strokeWidth={1.5} />
+      </button>
+
+      {/* RIGHT: PRODUCT THUMBNAILS */}
+      <div className="absolute right-[2.5%] top-1/2 z-30 flex -translate-y-1/2 flex-col gap-2">
+        {products.slice(0, 5).map((item, index) => (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => changeProduct(index)}
+            disabled={isChanging}
+            aria-label={`View ${item.name}`}
+            aria-current={active === index ? "true" : undefined}
+            className={`relative h-12 w-11 overflow-hidden border bg-white/40 transition-all duration-300 ${
+              active === index
+                ? "scale-105 border-black opacity-100"
+                : "border-black/15 opacity-65 hover:border-black/40 hover:opacity-100"
+            }`}
+          >
+            <img
+              src={item.image}
+              alt=""
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+          </button>
+        ))}
+      </div>
+
+      {/* BOTTOM: ACTIVE PRODUCT NAME */}
+      <div className="absolute bottom-8 left-1/2 z-20 max-w-[45%] -translate-x-1/2 text-center">
+        <p className="truncate text-[8px] uppercase tracking-[0.3em] text-black/50">
+          {product.name}
+        </p>
+      </div>
+
+      {/* BOTTOM: SLIDE INDICATORS */}
+      <div className="absolute bottom-8 right-[6%] z-20 flex items-center gap-2">
+        {products.slice(0, 5).map((item, index) => (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => changeProduct(index)}
+            disabled={isChanging}
+            aria-label={`Go to product ${index + 1}`}
+            className={`h-[2px] transition-all duration-300 ${
+              active === index
+                ? "w-8 bg-black"
+                : "w-3 bg-black/25 hover:bg-black/60"
+            }`}
+          />
+        ))}
+      </div>
+    </section>
   );
 }
+
