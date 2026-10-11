@@ -3,6 +3,70 @@ import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { getAdminSession } from "@/lib/admin-auth";
 
+export const runtime = "nodejs";
+
+async function createTransparentImage(
+  imageUrl: string,
+  productName: string,
+  productId: number
+) {
+  const apiKey = process.env.REMOVE_BG_API_KEY;
+
+  if (!apiKey) {
+    throw new Error(
+      "REMOVE_BG_API_KEY is not configured."
+    );
+  }
+
+  const formData = new FormData();
+
+  formData.append("image_url", imageUrl);
+  formData.append("size", "auto");
+  formData.append("format", "png");
+
+  const response = await fetch(
+    "https://api.remove.bg/v1.0/removebg",
+    {
+      method: "POST",
+      headers: {
+        "X-Api-Key": apiKey,
+      },
+      body: formData,
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+
+    throw new Error(
+      `remove.bg failed (${response.status}): ${errorText}`
+    );
+  }
+
+  const pngBuffer = Buffer.from(
+    await response.arrayBuffer()
+  );
+
+  /*
+   * IMPORTANT:
+   *
+   * This example stores the generated PNG as a
+   * data URL so it works immediately without adding
+   * another storage provider.
+   *
+   * For production, move this to Cloudinary/S3/etc.
+   */
+
+  const base64 = pngBuffer.toString(
+    "base64"
+  );
+
+  const transparentImage =
+    `data:image/png;base64,${base64}`;
+
+  return transparentImage;
+}
+
 export async function GET() {
   try {
     const admin = await getAdminSession();
@@ -30,16 +94,24 @@ export async function GET() {
       }))
     );
   } catch (error) {
-    console.error("Products GET error:", error);
+    console.error(
+      "Products GET error:",
+      error
+    );
 
     return NextResponse.json(
-      { message: "Unable to load products." },
+      {
+        message:
+          "Unable to load products.",
+      },
       { status: 500 }
     );
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(
+  request: Request
+) {
   try {
     const admin = await getAdminSession();
 
@@ -50,7 +122,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
+    const body =
+      await request.json();
 
     const name =
       typeof body.name === "string"
@@ -68,7 +141,9 @@ export async function POST(request: Request) {
         : "";
 
     const price = Number(body.price);
-    const originalPrice = Number(body.originalPrice);
+
+    const originalPrice =
+      Number(body.originalPrice);
 
     const image =
       typeof body.image === "string"
@@ -80,13 +155,17 @@ export async function POST(request: Request) {
         ? body.description.trim()
         : "";
 
-    const sizes = Array.isArray(body.sizes)
-      ? body.sizes.filter(
-          (size: unknown): size is string =>
-            typeof size === "string" &&
-            size.trim().length > 0
-        )
-      : [];
+    const sizes =
+      Array.isArray(body.sizes)
+        ? body.sizes.filter(
+            (
+              size: unknown
+            ): size is string =>
+              typeof size ===
+                "string" &&
+              size.trim().length > 0
+          )
+        : [];
 
     const badge =
       typeof body.badge === "string"
@@ -112,7 +191,10 @@ export async function POST(request: Request) {
       );
     }
 
-    if (price <= 0 || originalPrice <= 0) {
+    if (
+      price <= 0 ||
+      originalPrice <= 0
+    ) {
       return NextResponse.json(
         {
           message:
@@ -122,8 +204,11 @@ export async function POST(request: Request) {
       );
     }
 
-    const client = await clientPromise;
-    const db = client.db("VELMORI");
+    const client =
+      await clientPromise;
+
+    const db =
+      client.db("VELMORI");
 
     const productsCollection =
       db.collection("products");
@@ -135,21 +220,66 @@ export async function POST(request: Request) {
         .limit(1)
         .next();
 
-    const nextId = latestProduct?.id
-      ? Number(latestProduct.id) + 1
-      : 1;
+    const nextId =
+      latestProduct?.id
+        ? Number(latestProduct.id) + 1
+        : 1;
+
+    /*
+     * ==========================================
+     * CREATE TRANSPARENT PNG
+     * ==========================================
+     */
+
+    let transparentImage: string | null =
+      null;
+
+    try {
+      transparentImage =
+        await createTransparentImage(
+          image,
+          name,
+          nextId
+        );
+    } catch (error) {
+      console.error(
+        "Transparent image generation failed:",
+        error
+      );
+
+      /*
+       * We DO NOT fail the product creation.
+       *
+       * The original product still gets saved.
+       */
+
+      transparentImage = null;
+    }
 
     const product = {
       id: nextId,
+
       name,
       category,
       gender,
+
       price,
       originalPrice,
+
       image,
+
+      /*
+       * New field
+       */
+      transparentImage,
+
       description,
       sizes,
-      ...(badge ? { badge } : {}),
+
+      ...(badge
+        ? { badge }
+        : {}),
+
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -161,19 +291,34 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        message: "Product created successfully.",
+        message:
+          "Product created successfully.",
+
         product: {
           ...product,
-          _id: result.insertedId.toString(),
+
+          _id:
+            result.insertedId.toString(),
         },
+
+        transparentImageCreated:
+          Boolean(
+            transparentImage
+          ),
       },
       { status: 201 }
     );
   } catch (error) {
-    console.error("Products POST error:", error);
+    console.error(
+      "Products POST error:",
+      error
+    );
 
     return NextResponse.json(
-      { message: "Unable to create product." },
+      {
+        message:
+          "Unable to create product.",
+      },
       { status: 500 }
     );
   }

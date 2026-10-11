@@ -5,7 +5,12 @@ export type Product = {
   gender: string;
   price: number;
   originalPrice: number;
+
   image: string;
+
+  // NEW
+  transparentImage?: string;
+
   description: string;
   sizes: string[];
   badge?: string;
