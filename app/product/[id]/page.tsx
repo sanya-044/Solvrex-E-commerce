@@ -189,7 +189,7 @@ if (productsResponse.ok) {
   ======================================== */
 if (loading) {
   return (
-    <main className="flex min-h-[70vh] items-center justify-center bg-[#f7f6f2]">
+    <main className="flex min-h-[70vh] items-center justify-center bg-[#fbf4f2]">
       <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-black/40">
         Loading Product...
       </p>
@@ -198,20 +198,20 @@ if (loading) {
 }
   if (error || !product) {
     return (
-      <main className="flex min-h-[70vh] items-center justify-center bg-[#f7f6f2] px-5">
+      <main className="flex min-h-[70vh] items-center justify-center bg-[#fbf4f2] px-5">
         <div className="text-center">
 
           <p className="mb-3 text-[10px] uppercase tracking-[0.3em] text-black/40">
             VELMORI
           </p>
 
-          <h1 className="text-4xl font-black uppercase tracking-[-0.06em]">
+          <h1 className="text-4xl font-medium tracking-[-0.06em]">
   {error || "Product Not Found"}
 </h1>
 
           <Link
             href="/shop"
-            className="mt-8 inline-flex items-center gap-2 border border-black px-7 py-4 text-[10px] font-bold uppercase tracking-[0.2em] transition-colors hover:bg-black hover:text-white"
+            className="mt-8 inline-flex items-center gap-2 border border-black px-7 py-4 text-[10px] font-bold uppercase tracking-[0.2em] transition-colors hover:bg-[#26231f] hover:text-white"
           >
             <ArrowLeft size={14} />
             Back to Shop
@@ -269,7 +269,7 @@ const handleBuyNow = () => {
   ======================================== */
 
   return (
-    <main className="bg-[#f7f6f2]">
+    <main className="bg-[#fbf4f2]">
 
       {/* =====================================
           BREADCRUMB
@@ -307,7 +307,7 @@ const handleBuyNow = () => {
 
             {/* MAIN IMAGE */}
 
-            <div className="relative aspect-[3/4] overflow-hidden bg-[#e9e6df] sm:col-span-2">
+            <div className="relative aspect-[3/4] overflow-hidden bg-[#f0dcdd] sm:col-span-2">
 
               <img
                 src={product.image}
@@ -318,7 +318,7 @@ const handleBuyNow = () => {
 
               {/* Discount */}
 
-              <span className="absolute left-4 top-4 bg-white px-3 py-2 text-[9px] font-medium uppercase tracking-[0.15em]">
+              <span className="absolute left-4 top-4 bg-[#fcfaf6] px-3 py-2 text-[9px] font-medium uppercase tracking-[0.15em]">
                 {discount}% OFF
               </span>
 
@@ -326,7 +326,7 @@ const handleBuyNow = () => {
 
             {/* SECOND IMAGE */}
 
-            <div className="relative aspect-[3/4] overflow-hidden bg-[#e9e6df]">
+            <div className="relative aspect-[3/4] overflow-hidden bg-[#f0dcdd]">
 
               <img
                 src={product.image}
@@ -339,7 +339,7 @@ const handleBuyNow = () => {
 
             {/* THIRD IMAGE */}
 
-            <div className="relative aspect-[3/4] overflow-hidden bg-[#e9e6df]">
+            <div className="relative aspect-[3/4] overflow-hidden bg-[#f0dcdd]">
 
               <img
                 src={product.image}
@@ -463,7 +463,7 @@ const handleBuyNow = () => {
                         transition-all
                         ${
                           selectedSize === size
-                            ? "border-black bg-black text-white"
+                            ? "border-black bg-[#26231f] text-white"
                             : "border-black/15 hover:border-black"
                         }
                       `}
@@ -499,7 +499,7 @@ const handleBuyNow = () => {
                       )
                     )
                   }
-                  className="flex h-full w-10 items-center justify-center transition-colors hover:bg-black/5"
+                  className="flex h-full w-10 items-center justify-center transition-colors hover:bg-[#26231f]/5"
                   aria-label="Decrease quantity"
                 >
                   <Minus size={14} />
@@ -516,7 +516,7 @@ const handleBuyNow = () => {
                       quantity + 1
                     )
                   }
-                  className="flex h-full w-10 items-center justify-center transition-colors hover:bg-black/5"
+                  className="flex h-full w-10 items-center justify-center transition-colors hover:bg-[#26231f]/5"
                   aria-label="Increase quantity"
                 >
                   <Plus size={14} />
@@ -553,10 +553,10 @@ const handleBuyNow = () => {
         transition-all
         ${
           !selectedSize
-            ? "cursor-not-allowed bg-black/10 text-black/35"
+            ? "cursor-not-allowed bg-[#26231f]/10 text-black/35"
             : addedToBag
-            ? "bg-black text-white"
-            : "bg-black text-white hover:bg-black/80"
+            ? "bg-[#26231f] text-white"
+            : "bg-[#26231f] text-white hover:bg-[#26231f]/80"
         }
       `}
     >
@@ -590,7 +590,7 @@ const handleBuyNow = () => {
         transition-all
         ${
           isWishlisted
-            ? "border-black bg-black text-white"
+            ? "border-black bg-[#26231f] text-white"
             : "border-black/15 hover:border-black"
         }
       `}
@@ -628,7 +628,7 @@ const handleBuyNow = () => {
       transition-all
       ${
         selectedSize
-          ? "border-black hover:bg-black hover:text-white"
+          ? "border-black hover:bg-[#26231f] hover:text-white"
           : "cursor-not-allowed border-black/10 text-black/25"
       }
     `}
@@ -727,7 +727,7 @@ const handleBuyNow = () => {
     DELIVERY CHECK
 ================================= */}
 
-<div className="mt-6 border border-black/10 bg-white p-5">
+<div className="mt-6 border border-black/10 bg-[#fcfaf6] p-5">
 
   <div className="flex items-center gap-3">
 
@@ -796,11 +796,11 @@ const handleBuyNow = () => {
   )}
 
 </div>
-            <div className="mt-6 border border-black/10 bg-white p-5">
+            <div className="mt-6 border border-black/10 bg-[#fcfaf6] p-5">
 
               <div className="flex items-start gap-4">
 
-                <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-black" />
+                <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[#26231f]" />
 
                 <div>
 
@@ -818,7 +818,7 @@ const handleBuyNow = () => {
 
               <div className="mt-4 flex items-start gap-4">
 
-                <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-black" />
+                <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-[#26231f]" />
 
                 <div>
 
@@ -856,7 +856,7 @@ const handleBuyNow = () => {
           VELMORI / DISCOVER
         </p>
 
-        <h2 className="text-3xl font-black uppercase tracking-[-0.06em] sm:text-4xl">
+        <h2 className="text-3xl font-medium tracking-[-0.06em] sm:text-4xl">
           You May Also Like
         </h2>
       </div>
@@ -886,7 +886,7 @@ const handleBuyNow = () => {
             className="group"
           >
 
-            <div className="aspect-[3/4] overflow-hidden bg-[#e9e6df]">
+            <div className="aspect-[3/4] overflow-hidden bg-[#f0dcdd]">
 
               <img
                 src={item.image}
@@ -916,8 +916,8 @@ const handleBuyNow = () => {
 
     </div>
         {showSizeGuide && (
-  <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
-    <div className="relative w-full max-w-2xl bg-white p-6 text-black">
+  <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#26231f]/50 p-4">
+    <div className="relative w-full max-w-2xl bg-[#fcfaf6] p-6 text-black">
       
       <button
         type="button"

@@ -18,7 +18,7 @@ export default function OrderStatusBadge({
     >
       <span
         className={`h-1.5 w-1.5 rounded-full ${
-          isCancelled ? "bg-red-900/60" : "bg-black"
+          isCancelled ? "bg-red-900/60" : "bg-[#26231f]"
         }`}
       />
       {ORDER_STATUS_LABELS[status]}

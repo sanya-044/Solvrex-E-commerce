@@ -1,19 +1,8 @@
 import { MongoClient } from "mongodb";
 
-const uri = process.env.MONGODB_URI;
-
-if (!uri) {
-  throw new Error(
-    "Please add MONGODB_URI to your environment variables."
-  );
-}
-
 const options = {
   serverSelectionTimeoutMS: 10000,
 };
-
-let client: MongoClient;
-let clientPromise: Promise<MongoClient>;
 
 declare global {
   var _mongoClientPromise:
@@ -21,17 +10,24 @@ declare global {
     | undefined;
 }
 
-if (process.env.NODE_ENV === "development") {
-  if (!global._mongoClientPromise) {
-    client = new MongoClient(uri, options);
-    global._mongoClientPromise =
-      client.connect();
+const clientPromise = Promise.resolve().then(() => {
+  const uri = process.env.MONGODB_URI;
+
+  if (!uri) {
+    throw new Error(
+      "Please add MONGODB_URI to your environment variables."
+    );
   }
 
-  clientPromise = global._mongoClientPromise!;
-} else {
-  client = new MongoClient(uri, options);
-  clientPromise = client.connect();
-}
+  if (process.env.NODE_ENV === "development") {
+    if (!global._mongoClientPromise) {
+      global._mongoClientPromise = new MongoClient(uri, options).connect();
+    }
+
+    return global._mongoClientPromise;
+  }
+
+  return new MongoClient(uri, options).connect();
+});
 
 export default clientPromise;

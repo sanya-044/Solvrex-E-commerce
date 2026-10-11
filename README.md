@@ -2,7 +2,15 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+### Configure the database
+
+The app reads products and account data from MongoDB. Create a MongoDB database (for example, a free MongoDB Atlas cluster), copy `.env.example` to `.env.local`, and replace the `MONGODB_URI` placeholder with the connection string for that database. Make sure the database user's password is URL-encoded if it contains reserved characters, and allow your development machine's IP address in the cluster network access settings.
+
+The server will show `Please add MONGODB_URI to your environment variables.` until `.env.local` contains a valid `MONGODB_URI`. Restart the development server after adding or changing environment variables.
+
+### Run the development server
+
+Install dependencies if needed, then run:
 
 ```bash
 npm run dev
@@ -15,6 +23,8 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+Google sign-in, email delivery, and Razorpay payments need their corresponding optional credentials configured in `.env.local`; see `.env.example` for the variable names.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 

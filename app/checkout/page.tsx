@@ -265,7 +265,7 @@ export default function CheckoutPage() {
   // Loading authentication state
   if (status === "loading") {
     return (
-      <main className="min-h-screen bg-[#f7f6f2] px-6 py-20">
+      <main className="min-h-screen bg-[#fbf4f2] px-6 py-20">
         <div className="mx-auto flex max-w-7xl items-center justify-center">
           <Loader2 size={22} className="animate-spin" />
         </div>
@@ -276,7 +276,7 @@ export default function CheckoutPage() {
   // Redirecting unauthenticated user
   if (status === "unauthenticated") {
     return (
-      <main className="min-h-screen bg-[#f7f6f2] px-6 py-20">
+      <main className="min-h-screen bg-[#fbf4f2] px-6 py-20">
         <div className="mx-auto max-w-7xl">
           <p className="text-[10px] uppercase tracking-[0.25em] text-black/50">
             Redirecting to login...
@@ -289,10 +289,10 @@ export default function CheckoutPage() {
   // Successful order screen
   if (orderSuccess) {
     return (
-      <main className="min-h-screen bg-[#f7f6f2]">
+      <main className="min-h-screen bg-[#fbf4f2]">
         <div className="mx-auto flex min-h-[80vh] max-w-3xl items-center justify-center px-6 py-20">
-          <div className="w-full border border-black/10 bg-white px-8 py-14 text-center md:px-16">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-black text-white">
+          <div className="w-full border border-black/10 bg-[#fcfaf6] px-8 py-14 text-center md:px-16">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#26231f] text-white">
               <Check size={22} />
             </div>
 
@@ -300,7 +300,7 @@ export default function CheckoutPage() {
               Order Confirmed
             </p>
 
-            <h1 className="mt-3 text-4xl font-black uppercase tracking-[-0.06em] md:text-5xl">
+            <h1 className="mt-3 text-4xl font-medium tracking-[-0.06em] md:text-5xl">
               Thank You
             </h1>
 
@@ -323,7 +323,7 @@ export default function CheckoutPage() {
               <button
                 type="button"
                 onClick={() => router.push("/account")}
-                className="h-12 bg-black px-8 text-[9px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80"
+                className="h-12 bg-[#26231f] px-8 text-[9px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80"
               >
                 View Account
               </button>
@@ -343,7 +343,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f6f2]">
+    <main className="min-h-screen bg-[#fbf4f2]">
       {/* HEADER */}
       <div className="border-b border-black/10">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-7">
@@ -377,7 +377,7 @@ export default function CheckoutPage() {
                 01
               </p>
 
-              <h1 className="mt-2 text-3xl font-black uppercase tracking-[-0.05em] md:text-4xl">
+              <h1 className="mt-2 text-3xl font-medium tracking-[-0.05em] md:text-4xl">
                 Customer Information
               </h1>
 
@@ -427,7 +427,7 @@ export default function CheckoutPage() {
                 02
               </p>
 
-              <h2 className="mt-2 text-3xl font-black uppercase tracking-[-0.05em]">
+              <h2 className="mt-2 text-3xl font-medium tracking-[-0.05em]">
                 Delivery Address
               </h2>
 
@@ -489,7 +489,7 @@ export default function CheckoutPage() {
                 03
               </p>
 
-              <h2 className="mt-2 text-3xl font-black uppercase tracking-[-0.05em]">
+              <h2 className="mt-2 text-3xl font-medium tracking-[-0.05em]">
                 Payment
               </h2>
 
@@ -497,7 +497,7 @@ export default function CheckoutPage() {
                 {/* COD Option */}
                 <div
                   onClick={() => setPaymentMethod("COD")}
-                  className={`cursor-pointer border bg-white p-6 transition-all ${
+                  className={`cursor-pointer border bg-[#fcfaf6] p-6 transition-all ${
                     paymentMethod === "COD"
                       ? "border-black"
                       : "border-black/15"
@@ -507,12 +507,12 @@ export default function CheckoutPage() {
                     <div
                       className={`flex h-5 w-5 items-center justify-center rounded-full border ${
                         paymentMethod === "COD"
-                          ? "border-black bg-black"
+                          ? "border-black bg-[#26231f]"
                           : "border-black/30"
                       }`}
                     >
                       {paymentMethod === "COD" && (
-                        <div className="h-2 w-2 rounded-full bg-white" />
+                        <div className="h-2 w-2 rounded-full bg-[#fcfaf6]" />
                       )}
                     </div>
                     <div>
@@ -529,7 +529,7 @@ export default function CheckoutPage() {
                 {/* Online Payment Option */}
                 <div
                   onClick={() => setPaymentMethod("ONLINE")}
-                  className={`cursor-pointer border bg-white p-6 transition-all ${
+                  className={`cursor-pointer border bg-[#fcfaf6] p-6 transition-all ${
                     paymentMethod === "ONLINE"
                       ? "border-black"
                       : "border-black/15"
@@ -539,12 +539,12 @@ export default function CheckoutPage() {
                     <div
                       className={`flex h-5 w-5 items-center justify-center rounded-full border ${
                         paymentMethod === "ONLINE"
-                          ? "border-black bg-black"
+                          ? "border-black bg-[#26231f]"
                           : "border-black/30"
                       }`}
                     >
                       {paymentMethod === "ONLINE" && (
-                        <div className="h-2 w-2 rounded-full bg-white" />
+                        <div className="h-2 w-2 rounded-full bg-[#fcfaf6]" />
                       )}
                     </div>
                     <div>
@@ -571,9 +571,9 @@ export default function CheckoutPage() {
           </div>
 
           {/* RIGHT — ORDER SUMMARY */}
-          <aside className="border border-black/10 bg-white">
+          <aside className="border border-black/10 bg-[#fcfaf6]">
             <div className="flex items-center justify-between border-b border-black/10 px-6 py-6">
-              <h2 className="text-xl font-black uppercase tracking-[-0.04em]">
+              <h2 className="text-xl font-medium tracking-[-0.04em]">
                 Your Bag
               </h2>
 
@@ -589,7 +589,7 @@ export default function CheckoutPage() {
                   key={`${item.product.id}-${item.size}`}
                   className="flex gap-4 p-5"
                 >
-                  <div className="h-28 w-24 shrink-0 overflow-hidden bg-black/5">
+                  <div className="h-28 w-24 shrink-0 overflow-hidden bg-[#26231f]/5">
                     <img
                       src={item.product.image}
                       alt={item.product.name}
@@ -644,7 +644,7 @@ export default function CheckoutPage() {
                 <span className="text-[9px] font-bold uppercase tracking-[0.25em]">
                   Total
                 </span>
-                <span className="text-3xl font-black tracking-[-0.05em]">
+                <span className="text-3xl font-medium tracking-[-0.05em]">
                   ₹{total.toLocaleString("en-IN")}
                 </span>
               </div>
@@ -653,7 +653,7 @@ export default function CheckoutPage() {
                 type="button"
                 onClick={handlePlaceOrder}
                 disabled={placingOrder || items.length === 0}
-                className="mt-7 flex h-16 w-full items-center justify-center gap-3 bg-black text-[10px] font-bold uppercase tracking-[0.25em] text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+                className="mt-7 flex h-16 w-full items-center justify-center gap-3 bg-[#26231f] text-[10px] font-bold uppercase tracking-[0.25em] text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {placingOrder ? (
                   <>

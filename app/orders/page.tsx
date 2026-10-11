@@ -18,24 +18,24 @@ export default async function OrdersPage() {
   const orders = await getOrdersByUserId(session.user.id);
 
   return (
-    <main className="min-h-[70vh] bg-[#f5f3ee] px-5 py-16 text-[#0a0a0a] sm:px-8">
+    <main className="min-h-[70vh] bg-[#fbf4f2] px-5 py-16 text-[#26231f] sm:px-8">
       <div className="mx-auto w-full max-w-3xl">
         <p className="text-[10px] uppercase tracking-[0.3em] text-black/40">
           VELMORI / ACCOUNT
         </p>
 
-        <h1 className="mt-4 text-5xl font-black uppercase leading-[0.85] tracking-[-0.06em] sm:text-6xl">
+        <h1 className="mt-4 text-5xl font-medium leading-[0.85] tracking-[-0.06em] sm:text-6xl">
           Your Orders
         </h1>
 
         {orders.length === 0 ? (
-          <div className="mt-14 border border-black/15 px-6 py-14 text-center bg-white/50">
+          <div className="mt-14 border border-black/15 px-6 py-14 text-center bg-[#fcfaf6]/50">
             <p className="text-sm text-black/50">
               You haven&apos;t placed any orders yet.
             </p>
             <Link
               href="/shop"
-              className="mt-6 inline-block bg-black px-7 py-4 text-[9px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80"
+              className="mt-6 inline-block bg-[#26231f] px-7 py-4 text-[9px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80"
             >
               Start Shopping
             </Link>
@@ -45,7 +45,7 @@ export default async function OrdersPage() {
             {orders.map((order) => (
               <div
                 key={order.id}
-                className="border border-black/15 bg-white p-6 sm:p-8 transition-all hover:border-black"
+                className="border border-black/15 bg-[#fcfaf6] p-6 sm:p-8 transition-all hover:border-black"
               >
                 {/* Order Meta Header (Status section removed) */}
                 <div className="flex flex-wrap items-center justify-between gap-4 border-b border-black/10 pb-4 mb-6">

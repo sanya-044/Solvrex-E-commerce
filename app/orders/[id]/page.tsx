@@ -29,7 +29,7 @@ export default async function OrderDetailPage({
   }
 
   return (
-    <main className="min-h-[70vh] bg-[#f5f3ee] px-5 py-16 text-[#0a0a0a] sm:px-8">
+    <main className="min-h-[70vh] bg-[#fbf4f2] px-5 py-16 text-[#26231f] sm:px-8">
       <div className="mx-auto w-full max-w-3xl">
         <Link
           href="/orders"
@@ -43,7 +43,7 @@ export default async function OrderDetailPage({
             <p className="text-[10px] uppercase tracking-[0.3em] text-black/40">
               VELMORI / ORDER #{order.orderNumber}
             </p>
-            <h1 className="mt-4 text-4xl font-black uppercase leading-[0.9] tracking-[-0.05em] sm:text-5xl">
+            <h1 className="mt-4 text-4xl font-medium leading-[0.9] tracking-[-0.05em] sm:text-5xl">
               Order Status
             </h1>
             <p className="mt-3 text-xs text-black/40">

@@ -36,7 +36,7 @@ export default function OrderStatusTimeline({
               <div
                 className={`flex h-6 w-6 items-center justify-center rounded-full border text-[10px] ${
                   reached
-                    ? "border-black bg-black text-white"
+                    ? "border-black bg-[#26231f] text-white"
                     : "border-black/20 text-black/30"
                 }`}
               >
@@ -54,7 +54,7 @@ export default function OrderStatusTimeline({
             {!isLast && (
               <div
                 className={`mx-2 mb-6 h-px flex-1 ${
-                  i < currentIndex ? "bg-black" : "bg-black/15"
+                  i < currentIndex ? "bg-[#26231f]" : "bg-[#26231f]/15"
                 }`}
               />
             )}

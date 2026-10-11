@@ -93,7 +93,7 @@ export default function EditProfile({
           setMessage("");
           setEditing(true);
         }}
-        className="border border-black bg-black px-6 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-black"
+        className="border border-black bg-[#26231f] px-6 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white transition hover:bg-[#fcfaf6] hover:text-black"
       >
         Edit Profile
       </button>
@@ -179,7 +179,7 @@ export default function EditProfile({
           type="button"
           onClick={handleSave}
           disabled={loading}
-          className="border border-black bg-black px-6 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white transition hover:bg-white hover:text-black disabled:cursor-not-allowed disabled:opacity-50"
+          className="border border-black bg-[#26231f] px-6 py-3 text-[10px] font-bold uppercase tracking-[0.18em] text-white transition hover:bg-[#fcfaf6] hover:text-black disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "Saving..." : "Save Changes"}
         </button>

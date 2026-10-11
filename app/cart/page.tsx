@@ -42,7 +42,7 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <main className="min-h-[70vh] bg-[#f7f6f2] px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
+      <main className="min-h-[70vh] bg-[#fbf4f2] px-5 py-16 sm:px-8 lg:px-12 lg:py-24">
         <div className="mx-auto flex min-h-[55vh] max-w-[1600px] items-center justify-center">
 
           <div className="text-center">
@@ -51,7 +51,7 @@ export default function CartPage() {
               VELMORI / BAG
             </p>
 
-            <h1 className="text-5xl font-black uppercase tracking-[-0.07em] sm:text-7xl">
+            <h1 className="text-5xl font-medium tracking-[-0.07em] sm:text-7xl">
               Your Bag Is Empty
             </h1>
 
@@ -64,7 +64,7 @@ export default function CartPage() {
 
             <Link
               href="/shop"
-              className="mt-8 inline-flex items-center gap-3 bg-black px-8 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-black/80"
+              className="mt-8 inline-flex items-center gap-3 bg-[#26231f] px-8 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-[#26231f]/80"
             >
               Continue Shopping
             </Link>
@@ -81,7 +81,7 @@ export default function CartPage() {
   ===================================== */
 
   return (
-    <main className="bg-[#f7f6f2]">
+    <main className="bg-[#fbf4f2]">
 
       {/* =================================
           HEADER
@@ -96,7 +96,7 @@ export default function CartPage() {
 
           <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
 
-            <h1 className="text-6xl font-black uppercase leading-[0.85] tracking-[-0.07em] sm:text-7xl lg:text-[8rem]">
+            <h1 className="text-6xl font-medium leading-[0.85] tracking-[-0.07em] sm:text-7xl lg:text-[8rem]">
               Your Bag
             </h1>
 
@@ -155,7 +155,7 @@ export default function CartPage() {
 
                   <Link
                     href={`/product/${item.product.id}`}
-                    className="h-36 w-28 shrink-0 overflow-hidden bg-[#e9e6df] sm:h-48 sm:w-36"
+                    className="h-36 w-28 shrink-0 overflow-hidden bg-[#f0dcdd] sm:h-48 sm:w-36"
                   >
                     <img
                       src={item.product.image}
@@ -220,7 +220,7 @@ export default function CartPage() {
                               item.quantity - 1
                             )
                           }
-                          className="flex h-full w-9 items-center justify-center hover:bg-black/5"
+                          className="flex h-full w-9 items-center justify-center hover:bg-[#26231f]/5"
                           aria-label="Decrease quantity"
                         >
                           <Minus size={12} />
@@ -239,7 +239,7 @@ export default function CartPage() {
                               item.quantity + 1
                             )
                           }
-                          className="flex h-full w-9 items-center justify-center hover:bg-black/5"
+                          className="flex h-full w-9 items-center justify-center hover:bg-[#26231f]/5"
                           aria-label="Increase quantity"
                         >
                           <Plus size={12} />
@@ -278,7 +278,7 @@ export default function CartPage() {
 
           <aside className="lg:sticky lg:top-24 lg:h-fit">
 
-            <div className="border border-black/10 bg-white p-6 sm:p-8">
+            <div className="border border-black/10 bg-[#fcfaf6] p-6 sm:p-8">
 
               <p className="mb-7 text-[10px] font-bold uppercase tracking-[0.2em]">
                 Order Summary
@@ -338,7 +338,7 @@ export default function CartPage() {
 
               <Link
                 href="/checkout"
-                className="flex h-14 items-center justify-center bg-black text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-black/80"
+                className="flex h-14 items-center justify-center bg-[#26231f] text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:bg-[#26231f]/80"
               >
                 Proceed to Checkout
               </Link>

@@ -78,7 +78,7 @@ function ResetPasswordForm() {
           VELMORI / ACCOUNT
         </p>
 
-        <h1 className="text-5xl font-black tracking-[-0.06em] sm:text-6xl">
+        <h1 className="text-5xl font-medium tracking-[-0.06em] sm:text-6xl">
           NEW PASSWORD
         </h1>
 
@@ -161,7 +161,7 @@ function ResetPasswordForm() {
           <button
             type="submit"
             disabled={loading}
-            className="flex h-14 w-full items-center justify-center bg-black text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-14 w-full items-center justify-center bg-[#26231f] text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "Updating..." : "Update Password"}
           </button>
@@ -183,7 +183,7 @@ function ResetPasswordForm() {
 // 2. Wrap the form in Suspense inside the default page export
 export default function ResetPasswordPage() {
   return (
-    <main className="min-h-[calc(100vh-144px)] bg-[#f5f3ee] px-5 py-16 sm:px-8 lg:px-12">
+    <main className="min-h-[calc(100vh-144px)] bg-[#fbf4f2] px-5 py-16 sm:px-8 lg:px-12">
       <Suspense fallback={<div className="text-center py-12">Loading...</div>}>
         <ResetPasswordForm />
       </Suspense>
