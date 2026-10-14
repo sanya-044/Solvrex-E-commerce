@@ -64,55 +64,58 @@ export default function Navbar() {
 
   return (
     <>
+      {/* ANNOUNCEMENT */}
+      <div className="bg-black px-4 py-2 text-center text-[9px] font-medium uppercase tracking-[0.3em] text-white sm:text-[10px]">
+        Free shipping on orders above ₹599
+      </div>
+
       {/* NAVBAR HEADER */}
-      <header className="sticky top-0 z-50 border-b border-[#51413f]/10 bg-[#fbf4f2]">
-        <div className="relative mx-auto flex h-[52px] max-w-[1600px] items-center justify-between px-4 sm:px-7 lg:px-10">
+      <header className="sticky top-0 z-50 border-b border-black/10 bg-[#f5f3ee]/95 backdrop-blur-md">
+        <div className="relative mx-auto flex h-[72px] max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">
           
           {/* MOBILE MENU BUTTON */}
           <button
             type="button"
-            onClick={() => setMenuOpen((open) => !open)}
+            onClick={() => setMenuOpen(!menuOpen)}
             className="lg:hidden"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={menuOpen}
-            aria-controls="mobile-navigation"
+            aria-label="Menu"
           >
-            {menuOpen ? <X size={17} strokeWidth={1.5} /> : <Menu size={17} strokeWidth={1.5} />}
+            {menuOpen ? <X size={21} strokeWidth={1.5} /> : <Menu size={21} strokeWidth={1.5} />}
           </button>
 
           {/* DESKTOP NAVIGATION */}
-          <nav className="hidden items-center gap-5 lg:flex">
+          <nav className="hidden items-center gap-8 lg:flex">
             {(["men", "women"] as const).map((genderKey) => (
               <button
                 key={genderKey}
                 type="button"
                 onClick={() => setActiveMenu(activeMenu === genderKey ? null : genderKey)}
-                className="flex items-center gap-1 text-[8px] font-medium uppercase tracking-[0.12em] transition-opacity hover:opacity-50"
+                className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-[0.16em] transition-opacity hover:opacity-50"
               >
                 {genderKey.charAt(0).toUpperCase() + genderKey.slice(1)}
                 <ChevronDown
-                  size={10}
+                  size={12}
                   className={`transition-transform ${activeMenu === genderKey ? "rotate-180" : ""}`}
                 />
               </button>
             ))}
-            <Link href="/shop" className="text-[8px] font-medium uppercase tracking-[0.12em] transition-opacity hover:opacity-50">
+            <Link href="/shop" className="text-[11px] font-medium uppercase tracking-[0.16em] transition-opacity hover:opacity-50">
               New Arrivals
             </Link>
-            <Link href="/shop" className="text-[8px] font-medium uppercase tracking-[0.12em] transition-opacity hover:opacity-50">
+            <Link href="/shop" className="text-[11px] font-medium uppercase tracking-[0.16em] transition-opacity hover:opacity-50">
               Collections
             </Link>
           </nav>
 
           {/* LOGO */}
-          <Link href="/" className="absolute left-1/2 -translate-x-1/2 font-serif text-[17px] font-medium tracking-[0.08em] sm:text-[18px]">
+          <Link href="/" className="absolute left-1/2 -translate-x-1/2 text-[25px] font-black tracking-[-0.07em] sm:text-[29px]">
             VELMORI
           </Link>
 
           {/* RIGHT ACTIONS */}
-          <div className="ml-auto flex items-center gap-3 sm:gap-4">
+          <div className="ml-auto flex items-center gap-4 sm:gap-5">
             <button type="button" onClick={() => setSearchOpen(true)} aria-label="Search">
-              <Search size={16} strokeWidth={1.4} className="transition-opacity hover:opacity-50" />
+              <Search size={20} strokeWidth={1.4} className="transition-opacity hover:opacity-50" />
             </button>
 
             <Link
@@ -120,72 +123,35 @@ export default function Navbar() {
                 aria-label={isAuthenticated ? "Account" : "Login"}
                 className="flex items-center gap-2 transition-opacity hover:opacity-50"
               >
-                <UserRound size={16} strokeWidth={1.4} />
-                <span className="hidden xl:block text-[8px] font-medium uppercase tracking-[0.12em]">
+                <UserRound size={20} strokeWidth={1.4} />
+                <span className="hidden xl:block text-[9px] font-bold uppercase tracking-[0.16em]">
                   {status === "loading" ? "Login" : isAuthenticated ? session.user?.name || "Account" : "Login"}
                 </span>
               </Link>
 
             <Link href="/wishlist" aria-label="Wishlist" className="relative hidden sm:block">
-              <Heart size={16} strokeWidth={1.4} className="transition-opacity hover:opacity-50" />
+              <Heart size={20} strokeWidth={1.4} className="transition-opacity hover:opacity-50" />
               {wishlistCount > 0 && (
-                <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#26231f] px-1 text-[8px] text-white">
+                <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-black px-1 text-[8px] text-white">
                   {wishlistCount}
                 </span>
               )}
             </Link>
 
             <Link href="/cart" aria-label="Shopping bag" className="relative">
-              <ShoppingBag size={16} strokeWidth={1.4} className="transition-opacity hover:opacity-50" />
-              <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#26231f] px-1 text-[8px] text-white">
+              <ShoppingBag size={20} strokeWidth={1.4} className="transition-opacity hover:opacity-50" />
+              <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-black px-1 text-[8px] text-white">
                 {mounted ? totalItems : 0}
               </span>
             </Link>
           </div>
         </div>
-        {menuOpen && (
-          <nav
-            id="mobile-navigation"
-            aria-label="Mobile navigation"
-            className="absolute inset-x-0 top-full z-[60] max-h-[calc(100dvh-52px)] overflow-y-auto border-b border-[#51413f]/15 bg-[#fbf4f2] px-5 pb-8 pt-5 shadow-[0_18px_35px_rgba(38,35,31,0.08)] sm:px-8 lg:hidden"
-          >
-            <p className="mb-4 text-[10px] uppercase tracking-[0.2em] text-black/45">Explore VELMORI</p>
-            <div className="flex flex-col">
-              {[
-                ["New arrivals", "/shop"],
-                ["Shop all", "/shop"],
-                ["Men", "/category/men"],
-                ["Women", "/category/women"],
-                ["T-Shirts", "/shop?category=T-Shirts"],
-                ["Hoodies", "/shop?category=Hoodies"],
-                ["Bottomwear", "/shop?category=Bottomwear"],
-                ["Wishlist", "/wishlist"],
-              ].map(([label, href]) => (
-                <Link
-                  key={label}
-                  href={href}
-                  onClick={() => setMenuOpen(false)}
-                  className="border-t border-black/10 py-3.5 text-[14px] tracking-[-0.02em] transition-opacity hover:opacity-55 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-                >
-                  {label}
-                </Link>
-              ))}
-              <Link
-                href={isAuthenticated ? "/account" : "/login"}
-                onClick={() => setMenuOpen(false)}
-                className="mt-3 inline-flex min-h-11 items-center justify-center border border-black text-[10px] uppercase tracking-[0.18em]"
-              >
-                My account
-              </Link>
-            </div>
-          </nav>
-        )}
       </header>
 
       {/* SEARCH OVERLAY */}
       {searchOpen && (
-        <div className="fixed inset-0 z-[9999] h-screen w-screen overflow-y-auto bg-[#fbf4f2] text-black">
-          <div className="sticky top-0 z-10 flex h-[72px] items-center justify-between border-b border-[#51413f]/15 bg-[#fbf4f2] px-5 sm:px-8 lg:px-12">
+        <div className="fixed inset-0 z-[9999] h-screen w-screen overflow-y-auto bg-[#f5f3ee] text-black">
+          <div className="sticky top-0 z-10 flex h-[72px] items-center justify-between border-b border-black/10 bg-[#f5f3ee] px-5 sm:px-8 lg:px-12">
             <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Search</span>
             <button
               type="button"
@@ -221,7 +187,7 @@ export default function Navbar() {
                       key={term}
                       type="button"
                       onClick={() => setSearchQuery(term)}
-                      className="border border-black/15 px-5 py-3 text-[9px] uppercase tracking-[0.15em] transition-all hover:border-black hover:bg-[#26231f] hover:text-white"
+                      className="border border-black/15 px-5 py-3 text-[9px] uppercase tracking-[0.15em] transition-all hover:border-black hover:bg-black hover:text-white"
                     >
                       {term}
                     </button>
@@ -251,10 +217,10 @@ export default function Navbar() {
                         }}
                         className="group"
                       >
-                        <div className="relative aspect-[3/4] overflow-hidden bg-[#f0dcdd]">
+                        <div className="relative aspect-[3/4] overflow-hidden bg-[#e9e6df]">
                           <img src={product.image} alt={product.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
                           {product.badge && (
-                            <span className="absolute left-3 top-3 bg-[#fcfaf6] px-2 py-1 text-[8px] uppercase tracking-[0.12em]">
+                            <span className="absolute left-3 top-3 bg-white px-2 py-1 text-[8px] uppercase tracking-[0.12em]">
                               {product.badge}
                             </span>
                           )}
@@ -270,7 +236,7 @@ export default function Navbar() {
                 ) : (
                   <div className="flex min-h-[350px] items-center justify-center">
                     <div className="text-center">
-                      <p className="text-4xl font-medium tracking-[-0.06em]">Nothing Found</p>
+                      <p className="text-4xl font-black uppercase tracking-[-0.06em]">Nothing Found</p>
                       <p className="mt-4 text-sm text-black/40">Try another search.</p>
                     </div>
                   </div>
@@ -284,7 +250,7 @@ export default function Navbar() {
       {/* DESKTOP MEGA MENU */}
       {activeMenu && (
         <div
-          className="fixed left-0 right-0 top-[52px] z-45 hidden border-b border-[#51413f]/15 bg-[#fbf4f2] shadow-[0_15px_40px_rgba(0,0,0,0.06)] lg:block"
+          className="fixed left-0 right-0 top-[98px] z-45 hidden border-b border-black/10 bg-[#f5f3ee] shadow-[0_15px_40px_rgba(0,0,0,0.06)] lg:block"
           onMouseLeave={() => setActiveMenu(null)}
         >
           <div className="mx-auto max-w-[1600px] px-12 py-10">

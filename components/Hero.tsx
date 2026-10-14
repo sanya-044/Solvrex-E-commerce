@@ -1,56 +1,236 @@
-import Link from "next/link";
+"use client";
 
-const collageTiles = [
-  "collage-tile-one",
-  "collage-tile-two",
-  "collage-tile-three",
-  "collage-tile-four",
-  "collage-tile-five",
-  "collage-tile-six",
+import { ArrowDownRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+
+const slides = [
+  {
+    number: "01",
+    label: "COLLECTION 01 — 2026",
+    eyebrow: "THE EVERYDAY REBELLION",
+    title: ["WEAR", "THE", "UNEXPECTED."],
+    description:
+      "Contemporary essentials designed for people who refuse to blend into the background.",
+    image:
+      "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=2200&q=90",
+  },
+  {
+    number: "02",
+    label: "COLLECTION 02 — AFTER DARK",
+    eyebrow: "MADE FOR THE NIGHT",
+    title: ["OWN", "THE", "NIGHT."],
+    description:
+      "Statement pieces built for late nights, city lights and everything in between.",
+    image:
+      "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=2200&q=90",
+  },
+  {
+    number: "03",
+    label: "COLLECTION 03 — NEW SEASON",
+    eyebrow: "A NEW PERSPECTIVE",
+    title: ["MAKE", "YOUR", "MOVE."],
+    description:
+      "Relaxed silhouettes. Bold details. A wardrobe without the rules.",
+    image:
+      "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=2200&q=90",
+  },
 ];
 
 export default function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const targetProgress = useRef(0);
+  const currentProgress = useRef(0);
+  const animationFrame = useRef<number | null>(null);
+
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+
+      const rect = sectionRef.current.getBoundingClientRect();
+
+      const scrollableDistance =
+        sectionRef.current.offsetHeight - window.innerHeight;
+
+      const newProgress = Math.min(
+        1,
+        Math.max(0, -rect.top / scrollableDistance)
+      );
+
+      targetProgress.current = newProgress;
+    };
+
+    const animate = () => {
+      const difference =
+        targetProgress.current - currentProgress.current;
+
+      currentProgress.current += difference * 0.09;
+
+      if (Math.abs(difference) < 0.0001) {
+        currentProgress.current = targetProgress.current;
+      }
+
+      setProgress(currentProgress.current);
+
+      animationFrame.current = requestAnimationFrame(animate);
+    };
+
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
+    handleScroll();
+
+    animationFrame.current = requestAnimationFrame(animate);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+
+      if (animationFrame.current) {
+        cancelAnimationFrame(animationFrame.current);
+      }
+    };
+  }, []);
+
+  /*
+    3 slides = 0vw → 200vw
+  */
+  const horizontalOffset =
+    progress * (slides.length - 1) * 100;
+
+  /*
+    Determine which collection is currently active.
+  */
+  const activeSlide = Math.min(
+    slides.length - 1,
+    Math.floor(progress * slides.length)
+  );
+
   return (
-    <div className="hero-experience relative isolate overflow-hidden bg-[#f8efee] text-[#292421]">
-      <section className="hero-sequence absolute inset-0 isolate overflow-hidden" aria-label="The Velmori jacket collection">
-        <div className="hero-model-stage pointer-events-none absolute inset-x-0 top-[3%] bottom-[2%] z-10 overflow-hidden" aria-hidden="true">
-          <img
-            src="/Images/campaign-model-base.png"
-            alt=""
-            className="hero-model-base absolute left-[58%] top-0 h-full w-auto max-w-none -translate-x-1/2 object-contain object-top"
-            fetchPriority="high"
-          />
-          <img src="/Images/campaign-look-ivory.png" alt="" className="hero-look hero-look-ivory absolute left-[58%] top-0 h-full w-auto max-w-none -translate-x-1/2 object-contain object-top" />
-          <img src="/Images/campaign-look-navy.png" alt="" className="hero-look hero-look-navy absolute left-[58%] top-0 h-full w-auto max-w-none -translate-x-1/2 object-contain object-top" />
-          <img src="/Images/campaign-look-suede.png" alt="" className="hero-look hero-look-suede absolute left-[58%] top-0 h-full w-auto max-w-none -translate-x-1/2 object-contain object-top" />
+    <section
+      ref={sectionRef}
+      className="relative h-[300vh] bg-black"
+    >
+      <div className="sticky top-0 h-screen overflow-hidden">
+
+        {/* MOVING HERO TRACK */}
+        <div
+          className="flex h-full will-change-transform"
+          style={{
+            transform: `translate3d(-${horizontalOffset}vw, 0, 0)`,
+          }}
+        >
+          {slides.map((slide) => (
+            <article
+              key={slide.number}
+              className="relative h-full w-screen flex-shrink-0 overflow-hidden"
+            >
+              {/* Image */}
+              <div className="absolute inset-0">
+                <img
+                  src={slide.image}
+                  alt={slide.label}
+                  className="h-full w-full object-cover"
+                />
+
+                <div className="absolute inset-0 bg-black/30" />
+              </div>
+
+              {/* Slide Content */}
+              <div className="relative z-10 flex h-full flex-col justify-between px-6 py-10 text-white sm:px-10 sm:py-14 lg:px-16 lg:py-16">
+
+                {/* Main typography */}
+                <div className="mt-24 max-w-[1200px]">
+                  <p className="mb-5 text-[10px] uppercase tracking-[0.35em] sm:text-xs">
+                    {slide.eyebrow}
+                  </p>
+
+                  <h1 className="text-[clamp(4rem,10vw,9.5rem)] font-black uppercase leading-[0.78] tracking-[-0.075em]">
+                    {slide.title.map((line) => (
+                      <span
+                        key={line}
+                        className="block"
+                      >
+                        {line}
+                      </span>
+                    ))}
+                  </h1>
+                </div>
+
+                {/* Bottom */}
+                <div className="flex items-end justify-between gap-8">
+                  <p className="hidden max-w-md text-xs leading-6 text-white/80 sm:block">
+                    {slide.description}
+                  </p>
+
+                  <a
+                    href="#new-arrivals"
+                    className="group flex shrink-0 items-center gap-4 border border-white px-6 py-4 text-[9px] font-medium uppercase tracking-[0.2em] transition-all duration-300 hover:bg-white hover:text-black sm:px-8"
+                  >
+                    Explore Collection
+
+                    <ArrowDownRight
+                      size={16}
+                      strokeWidth={1.5}
+                      className="transition-transform duration-300 group-hover:rotate-[-45deg]"
+                    />
+                  </a>
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
 
-        <div className="relative z-20 mx-auto h-full max-w-[1600px] px-5 sm:px-8 lg:px-12">
-          <div className="absolute left-5 top-[50%] max-w-[136px] sm:left-8 sm:top-[50%] sm:max-w-[170px] lg:left-12 lg:max-w-[190px]">
-            <p className="mb-3 text-[8px] uppercase tracking-[0.19em] text-[#705b58]/75 sm:mb-4 sm:text-[9px]">VELMORI · 01 / 03</p>
-            <h1 className="font-serif text-[clamp(1.35rem,2.5vw,2.15rem)] font-normal uppercase leading-[0.94] tracking-[-0.04em]">The<br />jacket<br />collection</h1>
-            <Link href="/shop?category=Outerwear" className="mt-4 inline-flex items-center gap-2 border-b border-[#292421]/50 pb-1 text-[8px] uppercase tracking-[0.15em] transition-opacity hover:opacity-55 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#292421] sm:mt-6 sm:text-[9px]">
-              View the edit <span aria-hidden="true">↗</span>
-            </Link>
-          </div>
-          <div className="absolute bottom-5 left-5 z-20 flex items-center gap-2 text-[8px] uppercase tracking-[0.15em] text-[#705b58]/70 sm:bottom-7 sm:left-8 lg:bottom-9 lg:left-12">
-            <span className="h-px w-5 bg-[#705b58]/45" /><span>Made for your everyday</span>
-          </div>
-          <div className="absolute bottom-5 right-5 z-20 text-[8px] uppercase tracking-[0.15em] text-[#705b58]/70 sm:bottom-7 sm:right-8 lg:bottom-9 lg:right-12">Spring / Summer · 2026</div>
-        </div>
-      </section>
+        {/* FIXED COLLECTION INDICATOR */}
+        <div className="pointer-events-none absolute left-6 top-10 z-30 flex items-center gap-3 text-white sm:left-10 sm:top-14 lg:left-16 lg:top-16">
+          <span className="h-px w-8 bg-white" />
 
-      <section className="hero-collage absolute inset-0 overflow-hidden bg-[#e9e0dc]" aria-label="Velmori editorial portrait">
-        <div className="hero-collage-frame absolute inset-0 overflow-hidden">
-          <picture className="absolute inset-0 block h-full w-full">
-            <source media="(max-width: 639px)" srcSet="/Images/campaign-collage-mobile.png" />
-            <img src="/Images/campaign-collage-landscape.png" alt="Model in a relaxed grey sweatshirt against an architectural concrete wall" className="hero-collage-image absolute inset-0 h-full w-full object-cover object-[center_top]" />
-          </picture>
-          <div className="hero-collage-tiles absolute inset-0 grid grid-cols-3 grid-rows-2" aria-hidden="true">
-            {collageTiles.map((tile) => <div key={tile} className={`hero-collage-tile ${tile}`} />)}
-          </div>
+          <span className="text-[10px] uppercase tracking-[0.3em] sm:text-xs">
+            {slides[activeSlide].label}
+          </span>
         </div>
-      </section>
-    </div>
+
+        {/* FIXED SLIDE NUMBER */}
+        <div className="pointer-events-none absolute right-6 top-10 z-30 text-[10px] tracking-[0.2em] text-white sm:right-10 sm:top-14 lg:right-16 lg:top-16">
+          {slides[activeSlide].number} / 03
+        </div>
+
+        {/* Progress indicators */}
+        <div className="absolute bottom-7 left-6 z-30 flex items-center gap-3 sm:left-10 lg:left-16">
+          {slides.map((slide, index) => (
+            <div
+              key={slide.number}
+              className="relative h-[2px] w-10 overflow-hidden bg-white/30"
+            >
+              <div
+                className="absolute inset-y-0 left-0 bg-white transition-[width] duration-100"
+                style={{
+                  width:
+                    index < activeSlide
+                      ? "100%"
+                      : index === activeSlide
+                        ? `${Math.max(
+                            15,
+                            Math.min(
+                              100,
+                              (progress * slides.length - index) * 100
+                            )
+                          )}%`
+                        : "0%",
+                }}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Scroll hint */}
+        <div className="absolute bottom-7 right-6 z-30 hidden items-center gap-3 text-[9px] uppercase tracking-[0.25em] text-white sm:flex">
+          <span>Scroll to explore</span>
+          <ArrowDownRight size={14} strokeWidth={1.2} />
+        </div>
+      </div>
+    </section>
   );
 }

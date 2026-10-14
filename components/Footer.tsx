@@ -62,7 +62,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#26231f] text-[#fbf4f2]">
+    <footer className="bg-[#0a0a0a] text-white">
 
       {/* =====================================
           MAIN FOOTER
@@ -80,7 +80,7 @@ export default function Footer() {
 
               <Link
                 href="/"
-                className="font-serif text-4xl font-normal tracking-[-0.08em]"
+                className="text-4xl font-black tracking-[-0.08em]"
               >
                 VELMORI
               </Link>
@@ -189,7 +189,7 @@ export default function Footer() {
                   Stay in the loop
                 </p>
 
-                <h2 className="mt-3 font-serif text-3xl font-normal tracking-[-0.055em] sm:text-4xl">
+                <h2 className="mt-3 text-3xl font-black uppercase tracking-[-0.06em] sm:text-4xl">
                   Get the latest.
                 </h2>
 
@@ -211,7 +211,7 @@ export default function Footer() {
                   <button
                     type="submit"
                     disabled={status === "loading" || status === "success"}
-                    className="h-12 bg-[#fcfaf6] px-6 text-[9px] font-bold uppercase tracking-[0.15em] text-black transition-opacity hover:opacity-80 disabled:opacity-50"
+                    className="h-12 bg-white px-6 text-[9px] font-bold uppercase tracking-[0.15em] text-black transition-opacity hover:opacity-80 disabled:opacity-50"
                   >
                     {status === "loading" ? "Subscribing..." : status === "success" ? "Subscribed" : "Subscribe"}
                   </button>

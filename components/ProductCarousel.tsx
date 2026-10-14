@@ -98,15 +98,10 @@ export default function ProductCarousel({
         Math.abs(event.deltaY) >
         Math.abs(event.deltaX)
       ) {
-        const maxScroll = container.scrollWidth - container.clientWidth;
-        const canScrollInDirection = event.deltaY > 0
-          ? container.scrollLeft < maxScroll - 1
-          : container.scrollLeft > 0;
+        event.preventDefault();
 
-        if (canScrollInDirection) {
-          event.preventDefault();
-          container.scrollLeft += event.deltaY;
-        }
+        container.scrollLeft +=
+          event.deltaY;
       }
     };
 
@@ -192,20 +187,7 @@ export default function ProductCarousel({
 
       <div
         ref={containerRef}
-        role="region"
-        aria-label="Featured products"
-        aria-roledescription="carousel"
-        tabIndex={0}
         onScroll={updateProgress}
-        onKeyDown={(event) => {
-          if (event.key === "ArrowRight") {
-            event.preventDefault();
-            scrollProducts("right");
-          } else if (event.key === "ArrowLeft") {
-            event.preventDefault();
-            scrollProducts("left");
-          }
-        }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={stopDragging}
@@ -221,10 +203,6 @@ export default function ProductCarousel({
           scrollbar-hide
           cursor-grab
           select-none
-          focus-visible:outline
-          focus-visible:outline-2
-          focus-visible:outline-offset-4
-          focus-visible:outline-black
         "
       >
 
@@ -269,7 +247,7 @@ export default function ProductCarousel({
             snap-start
             items-center
             justify-center
-            bg-[#f0dcdd]
+            bg-[#e9e6df]
             px-6
 
             sm:w-[47vw]
@@ -280,7 +258,7 @@ export default function ProductCarousel({
             transition-colors
             duration-300
 
-            hover:bg-[#26231f]
+            hover:bg-black
             hover:text-white
           "
         >
@@ -290,7 +268,7 @@ export default function ProductCarousel({
               className="
                 mb-5
                 whitespace-nowrap
-                text-[10px]
+                text-[9px]
                 uppercase
                 tracking-[0.25em]
                 text-black/45
@@ -344,7 +322,7 @@ export default function ProductCarousel({
             w-full
             max-w-[280px]
             overflow-hidden
-            bg-[#26231f]/10
+            bg-black/10
           "
         >
           <div
@@ -352,7 +330,7 @@ export default function ProductCarousel({
               absolute
               inset-y-0
               left-0
-              bg-[#26231f]
+              bg-black
               transition-[width]
               duration-150
             "
@@ -383,7 +361,7 @@ export default function ProductCarousel({
               border
               border-black/15
               transition-colors
-              hover:bg-[#26231f]
+              hover:bg-black
               hover:text-white
             "
           >
@@ -408,7 +386,7 @@ export default function ProductCarousel({
               border
               border-black/15
               transition-colors
-              hover:bg-[#26231f]
+              hover:bg-black
               hover:text-white
             "
           >
@@ -427,7 +405,7 @@ export default function ProductCarousel({
         className="
           mt-3
           hidden
-          text-[10px]
+          text-[9px]
           uppercase
           tracking-[0.25em]
           text-black/35

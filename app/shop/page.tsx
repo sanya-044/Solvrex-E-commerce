@@ -112,7 +112,7 @@ useEffect(() => {
   }, [products,activeCategory, sortBy]);
 
   return (
-    <main className="min-h-screen bg-[#fbf4f2] text-[#26231f]">
+    <main className="min-h-screen bg-[#f5f3ee] text-[#0a0a0a]">
 
       {/* ================================= */}
       {/* HEADER */}
@@ -130,7 +130,7 @@ useEffect(() => {
 
             <div>
 
-              <h1 className="text-6xl font-medium leading-[0.85] tracking-[-0.07em] sm:text-7xl lg:text-[9rem]">
+              <h1 className="text-6xl font-black uppercase leading-[0.85] tracking-[-0.07em] sm:text-7xl lg:text-[9rem]">
                 Shop
               </h1>
 
@@ -156,7 +156,7 @@ useEffect(() => {
       {/* FILTER BAR */}
       {/* ================================= */}
 
-      <section className="sticky top-0 z-20 border-b border-black/10 bg-[#fbf4f2]/95 px-5 backdrop-blur-md sm:px-8 lg:px-12">
+      <section className="sticky top-0 z-20 border-b border-black/10 bg-[#f5f3ee]/95 px-5 backdrop-blur-md sm:px-8 lg:px-12">
 
         <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-5 py-4">
 

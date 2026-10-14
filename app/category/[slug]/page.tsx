@@ -73,7 +73,7 @@ export default async function CategoryPage({
     gender ?? "Category";
 
   return (
-    <main className="min-h-screen bg-[#fbf4f2] text-[#26231f]">
+    <main className="min-h-screen bg-[#f5f3ee] text-[#0a0a0a]">
 
       {/* HEADER */}
 
@@ -89,7 +89,7 @@ export default async function CategoryPage({
 
             <div>
 
-              <h1 className="text-6xl font-medium leading-[0.85] tracking-[-0.07em] sm:text-7xl lg:text-[9rem]">
+              <h1 className="text-6xl font-black uppercase leading-[0.85] tracking-[-0.07em] sm:text-7xl lg:text-[9rem]">
                 {title}
               </h1>
 
@@ -191,13 +191,13 @@ export default async function CategoryPage({
                   Category not found
                 </p>
 
-                <h2 className="mt-3 text-4xl font-medium tracking-[-0.06em]">
+                <h2 className="mt-3 text-4xl font-black uppercase tracking-[-0.06em]">
                   Nothing here yet.
                 </h2>
 
                 <Link
                   href="/shop"
-                  className="mt-7 inline-flex bg-[#26231f] px-7 py-4 text-[9px] font-bold uppercase tracking-[0.2em] text-white"
+                  className="mt-7 inline-flex bg-black px-7 py-4 text-[9px] font-bold uppercase tracking-[0.2em] text-white"
                 >
                   Explore Shop
                 </Link>

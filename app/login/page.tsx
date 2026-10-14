@@ -84,7 +84,7 @@ export default function LoginPage() {
           Welcome Back
         </p>
 
-        <h1 className="text-5xl font-medium tracking-[-0.06em] sm:text-6xl">
+        <h1 className="text-5xl font-black tracking-[-0.06em] sm:text-6xl">
           LOGIN
         </h1>
 
@@ -157,19 +157,17 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="flex h-14 w-full items-center justify-center bg-[#26231f] text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-14 w-full items-center justify-center bg-black text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "Signing In..." : "Login"}
         </button>
       </form>
 
-      {process.env.NEXT_PUBLIC_AUTH_GOOGLE_ENABLED === "true" && (
-        <>
       <div className="relative my-8 flex items-center justify-center">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-black/10" />
         </div>
-        <span className="relative bg-[#fbf4f2] px-4 text-[9px] uppercase tracking-[0.2em] text-black/40">
+        <span className="relative bg-[#f5f3ee] px-4 text-[9px] uppercase tracking-[0.2em] text-black/40">
           Or
         </span>
       </div>
@@ -178,7 +176,7 @@ export default function LoginPage() {
         type="button"
         onClick={handleGoogleSignIn}
         disabled={loading}
-        className="flex h-14 w-full items-center justify-center gap-3 border border-black/15 bg-[#fcfaf6] text-[10px] font-bold uppercase tracking-[0.2em] text-black transition-all hover:border-black disabled:opacity-50"
+        className="flex h-14 w-full items-center justify-center gap-3 border border-black/15 bg-white text-[10px] font-bold uppercase tracking-[0.2em] text-black transition-all hover:border-black disabled:opacity-50"
       >
         <svg className="h-4 w-4" viewBox="0 0 24 24">
           <path
@@ -200,8 +198,6 @@ export default function LoginPage() {
         </svg>
         Continue with Google
       </button>
-        </>
-      )}
 
       <div className="mt-10 border-t border-black/10 pt-8 text-center">
         <p className="text-sm text-black/50">
@@ -226,8 +222,8 @@ export default function LoginPage() {
       </div>
 
       {isForgotOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#26231f]/40 px-4 backdrop-blur-sm">
-          <div className="relative w-full max-w-md bg-[#fbf4f2] p-8 shadow-2xl border border-black/10">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 backdrop-blur-sm">
+          <div className="relative w-full max-w-md bg-[#f5f3ee] p-8 shadow-2xl border border-black/10">
             <button
               type="button"
               onClick={() => setIsForgotOpen(false)}
@@ -236,7 +232,7 @@ export default function LoginPage() {
               <X size={20} strokeWidth={1.5} />
             </button>
 
-            <h3 className="text-xl font-medium tracking-[-0.04em] mb-2">
+            <h3 className="text-xl font-black uppercase tracking-[-0.04em] mb-2">
               Reset Password
             </h3>
 
@@ -271,7 +267,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={forgotLoading}
-                  className="flex h-12 w-full items-center justify-center bg-[#26231f] text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80 disabled:opacity-50"
+                  className="flex h-12 w-full items-center justify-center bg-black text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80 disabled:opacity-50"
                 >
                   {forgotLoading ? "Sending..." : "Send Reset Link"}
                 </button>

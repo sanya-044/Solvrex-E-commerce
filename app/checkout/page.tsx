@@ -204,15 +204,25 @@ export default function CheckoutPage() {
           description: "Order Payment",
           order_id: data.razorpayOrderId,
           handler: function (response: any) {
-            // Optional: still try to verify in background without blocking the UI
-            fetch("/api/verify-payment", {
+            // Verify in the background without blocking the UI. This only
+            // records payment; the order still awaits admin approval.
+            fetch("/api/varify-payment", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 ...response,
                 orderId: currentOrderId,
               }),
-            }).catch(err => console.error("Background verification error:", err));
+            })
+              .then((verifyResponse) => {
+                if (!verifyResponse.ok) {
+                  console.error(
+                    "Payment verification failed:",
+                    verifyResponse.status
+                  );
+                }
+              })
+              .catch(err => console.error("Background verification error:", err));
 
             // Instantly show the exact same Thank You card
             setOrderId(currentOrderId);
@@ -297,7 +307,7 @@ export default function CheckoutPage() {
             </div>
 
             <p className="mt-8 text-[9px] uppercase tracking-[0.3em] text-black/40">
-              Order Confirmed
+              Order Received
             </p>
 
             <h1 className="mt-3 text-4xl font-medium tracking-[-0.06em] md:text-5xl">
@@ -305,7 +315,7 @@ export default function CheckoutPage() {
             </h1>
 
             <p className="mx-auto mt-5 max-w-md text-sm leading-6 text-black/55">
-              Your order has been placed successfully. We&apos;ll process your order and prepare it for delivery.
+              Your order has been received and is awaiting confirmation. You can follow its status anytime under Your Orders.
             </p>
 
             {orderId && (
@@ -322,10 +332,10 @@ export default function CheckoutPage() {
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-center">
               <button
                 type="button"
-                onClick={() => router.push("/account")}
+                onClick={() => router.push("/orders")}
                 className="h-12 bg-[#26231f] px-8 text-[9px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80"
               >
-                View Account
+                Track Order
               </button>
 
               <button

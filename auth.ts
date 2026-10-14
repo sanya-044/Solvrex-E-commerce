@@ -1,64 +1,8 @@
-import NextAuth, { type NextAuthConfig } from "next-auth";
+ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import clientPromise from "@/lib/mongodb";
-
-const providers: NextAuthConfig["providers"] = [
-  Credentials({
-    name: "Credentials",
-    credentials: {
-      email: { label: "Email", type: "email" },
-      password: { label: "Password", type: "password" },
-    },
-    async authorize(credentials) {
-      const email =
-        typeof credentials?.email === "string"
-          ? credentials.email.trim().toLowerCase()
-          : "";
-      const password =
-        typeof credentials?.password === "string"
-          ? credentials.password
-          : "";
-
-      if (!email || !password) return null;
-
-      try {
-        const client = await clientPromise;
-        const db = client.db("VELMORI");
-        const user = await db.collection("users").findOne({ email });
-
-        if (!user) return null;
-
-        const passwordValid =
-          typeof user.password === "string"
-            ? await bcrypt.compare(password, user.password)
-            : false;
-
-        if (!passwordValid) return null;
-
-        return {
-          id: user._id.toString(),
-          name: user.name,
-          email: user.email,
-          role: user.role || "user",
-        };
-      } catch (error) {
-        console.error("Authentication error:", error);
-        return null;
-      }
-    },
-  }),
-];
-
-if (process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET) {
-  providers.push(
-    Google({
-      clientId: process.env.AUTH_GOOGLE_ID,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET,
-    })
-  );
-}
 
 declare module "next-auth" {
   interface User {
@@ -74,7 +18,56 @@ declare module "@auth/core/jwt" {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers,
+  providers: [
+    Credentials({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const email =
+          typeof credentials?.email === "string"
+            ? credentials.email.trim().toLowerCase()
+            : "";
+        const password =
+          typeof credentials?.password === "string"
+            ? credentials.password
+            : "";
+
+        if (!email || !password) return null;
+
+        try {
+          const client = await clientPromise;
+          const db = client.db("VELMORI");
+          const user = await db.collection("users").findOne({ email });
+
+          if (!user) return null;
+
+          const passwordValid =
+            typeof user.password === "string"
+              ? await bcrypt.compare(password, user.password)
+              : false;
+
+          if (!passwordValid) return null;
+
+          return {
+            id: user._id.toString(),
+            name: user.name,
+            email: user.email,
+            role: user.role || "user",
+          };
+        } catch (error) {
+          console.error("Authentication error:", error);
+          return null;
+        }
+      },
+    }),
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID!,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+    }),
+  ],
   session: {
     strategy: "jwt",
   },
