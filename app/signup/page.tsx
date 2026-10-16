@@ -80,7 +80,7 @@ export default function SignupPage() {
         <p className="mb-4 text-[9px] font-bold uppercase tracking-[0.3em] text-black/40">
           Join VELMORI
         </p>
-        <h1 className="text-5xl font-medium tracking-[-0.06em] sm:text-6xl">
+        <h1 className="text-5xl font-black tracking-[-0.06em] sm:text-6xl">
           CREATE ACCOUNT
         </h1>
         <p className="mx-auto mt-5 max-w-[380px] text-sm leading-6 text-black/50">
@@ -210,7 +210,7 @@ export default function SignupPage() {
         <button
           type="submit"
           disabled={loading}
-          className="flex h-14 w-full items-center justify-center bg-[#26231f] text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-14 w-full items-center justify-center bg-black text-[10px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "Creating Account..." : "Create Account"}
         </button>

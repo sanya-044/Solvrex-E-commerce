@@ -2,11 +2,15 @@
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
+import OrderTrackingStatus from "@/components/OrderTrackingStatus";
 import { getOrdersByUserId } from "@/lib/orders";
 
 export const metadata = {
   title: "Your Orders / VELMORI",
 };
+
+// Always read the latest persisted status from MongoDB.
+export const dynamic = "force-dynamic";
 
 export default async function OrdersPage() {
   const session = await auth();
@@ -47,7 +51,7 @@ export default async function OrdersPage() {
                 key={order.id}
                 className="border border-black/15 bg-[#fcfaf6] p-6 sm:p-8 transition-all hover:border-black"
               >
-                {/* Order Meta Header (Status section removed) */}
+                {/* Order Meta Header */}
                 <div className="flex flex-wrap items-center justify-between gap-4 border-b border-black/10 pb-4 mb-6">
                   <div>
                     <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-black/40">
@@ -67,19 +71,22 @@ export default async function OrdersPage() {
                   </div>
                 </div>
 
+                {/* Persisted approval / payment status */}
+                <OrderTrackingStatus order={order} />
+
                 {/* Ordered Items List */}
                 <div className="space-y-4">
                   <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-black/40">
                     Items ({order.items.length})
                   </p>
                   <div className="divide-y divide-black/5">
-                    {order.items.map((item: any, idx: number) => (
+                    {order.items.map((item, idx) => (
                       <div key={idx} className="py-3 flex items-center justify-between gap-4">
                         <div className="flex items-center gap-4">
-                          {item.image || item.img || item.imageUrl ? (
+                          {item.image ? (
                             <div className="relative h-16 w-12 flex-shrink-0 bg-neutral-100 border border-black/10 overflow-hidden">
                               <img
-                                src={item.image || item.img || item.imageUrl}
+                                src={item.image}
                                 alt={item.name || "Product image"}
                                 className="h-full w-full object-cover"
                               />
@@ -87,7 +94,7 @@ export default async function OrdersPage() {
                           ) : null}
                           <div>
                             <p className="text-xs font-bold uppercase tracking-wide">
-                              {item.name || item.title || "Product"}
+                              {item.name || "Product"}
                             </p>
                             <p className="text-[11px] text-black/50 mt-0.5">
                               Qty: {item.quantity} {item.size ? `· Size: ${item.size}` : ""} {item.color ? `· Color: ${item.color}` : ""}

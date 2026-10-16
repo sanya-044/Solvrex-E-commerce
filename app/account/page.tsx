@@ -21,7 +21,7 @@ export default async function AccountPage() {
   });
 
   return (
-    <main className="min-h-[calc(100vh-144px)] bg-[#fbf4f2] px-5 py-16 sm:px-8 lg:px-12">
+    <main className="min-h-[calc(100vh-144px)] bg-[#f5f3ee] px-5 py-16 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-[1000px]">
 
         {/* HEADER */}
@@ -30,7 +30,7 @@ export default async function AccountPage() {
             Your VELMORI Account
           </p>
 
-          <h1 className="text-5xl font-medium tracking-[-0.06em] sm:text-6xl">
+          <h1 className="text-5xl font-black tracking-[-0.06em] sm:text-6xl">
             ACCOUNT
           </h1>
         </div>
@@ -99,7 +99,7 @@ export default async function AccountPage() {
 
               <Link
                 href="/wishlist"
-                className="flex h-14 items-center justify-between border border-black/15 px-5 text-[10px] font-bold uppercase tracking-[0.18em] transition-all hover:border-black hover:bg-[#26231f] hover:text-white"
+                className="flex h-14 items-center justify-between border border-black/15 px-5 text-[10px] font-bold uppercase tracking-[0.18em] transition-all hover:border-black hover:bg-black hover:text-white"
               >
                 <span>Wishlist</span>
                 <span>→</span>
@@ -107,7 +107,7 @@ export default async function AccountPage() {
 
               <Link
                 href="/orders"
-                className="flex h-14 items-center justify-between border border-black/15 px-5 text-[10px] font-bold uppercase tracking-[0.18em] transition-all hover:border-black hover:bg-[#26231f] hover:text-white"
+                className="flex h-14 items-center justify-between border border-black/15 px-5 text-[10px] font-bold uppercase tracking-[0.18em] transition-all hover:border-black hover:bg-black hover:text-white"
               >
                 <span>Orders</span>
                 <span>→</span>
@@ -115,7 +115,7 @@ export default async function AccountPage() {
 
               <Link
                 href="/cart"
-                className="flex h-14 items-center justify-between border border-black/15 px-5 text-[10px] font-bold uppercase tracking-[0.18em] transition-all hover:border-black hover:bg-[#26231f] hover:text-white"
+                className="flex h-14 items-center justify-between border border-black/15 px-5 text-[10px] font-bold uppercase tracking-[0.18em] transition-all hover:border-black hover:bg-black hover:text-white"
               >
                 <span>Shopping Bag</span>
                 <span>→</span>
@@ -123,7 +123,7 @@ export default async function AccountPage() {
 
               <Link
                 href="/shop"
-                className="flex h-14 items-center justify-between border border-black/15 px-5 text-[10px] font-bold uppercase tracking-[0.18em] transition-all hover:border-black hover:bg-[#26231f] hover:text-white"
+                className="flex h-14 items-center justify-between border border-black/15 px-5 text-[10px] font-bold uppercase tracking-[0.18em] transition-all hover:border-black hover:bg-black hover:text-white"
               >
                 <span>Continue Shopping</span>
                 <span>→</span>

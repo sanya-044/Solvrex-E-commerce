@@ -4,11 +4,14 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getOrderByIdForUser } from "@/lib/orders";
 import OrderStatusBadge from "@/components/OrderStatusBadge";
-import OrderStatusTimeline from "@/components/OrderStatusTimeline";
+import OrderTrackingStatus from "@/components/OrderTrackingStatus";
 
 export const metadata = {
   title: "Order Details / VELMORI",
 };
+
+// Always read the latest persisted status from MongoDB.
+export const dynamic = "force-dynamic";
 
 export default async function OrderDetailPage({
   params,
@@ -59,9 +62,9 @@ export default async function OrderDetailPage({
           <OrderStatusBadge status={order.status} />
         </div>
 
-        {/* Status timeline */}
-        <div className="mt-12 border border-black/10 px-6 py-8">
-          <OrderStatusTimeline status={order.status} />
+        {/* Status + timeline (persisted approval/payment state) */}
+        <div className="mt-12">
+          <OrderTrackingStatus order={order} />
 
           {order.trackingNumber && (
             <div className="mt-8 flex flex-col gap-1 border-t border-black/10 pt-6 text-sm sm:flex-row sm:items-center sm:justify-between">
@@ -141,7 +144,9 @@ export default async function OrderDetailPage({
                   .filter(Boolean)
                   .join(", ")}
               </p>
-              <p>{order.shippingAddress.country}</p>
+              {order.shippingAddress.country && (
+                <p>{order.shippingAddress.country}</p>
+              )}
             </div>
           </div>
 

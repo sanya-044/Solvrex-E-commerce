@@ -40,7 +40,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </Link>
 
         {/* Discount */}
-        <span className="absolute left-3 top-3 bg-[#fcfaf6] px-2 py-1 text-[9px] font-medium uppercase tracking-wider">
+        <span className="absolute left-3 top-3 bg-white px-2 py-1 text-[9px] font-medium uppercase tracking-wider">
           {discount}% off
         </span>
 
@@ -57,7 +57,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               ? "Remove from wishlist"
               : "Add to wishlist"
           }
-          className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-[#fcfaf6] transition-all hover:scale-105"
+          className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-white transition-all hover:scale-105"
         >
           <Heart
             size={17}
@@ -83,7 +83,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             e.stopPropagation();
             addToCart(product, "M", 1);
           }}
-          className="absolute bottom-3 left-3 right-3 z-20 hidden bg-[#fcfaf6] py-3 text-[9px] font-semibold uppercase tracking-[0.2em] opacity-0 transition-all duration-300 group-hover:opacity-100 sm:block hover:bg-[#26231f] hover:text-white"
+          className="absolute bottom-3 left-3 right-3 z-20 hidden bg-white py-3 text-[9px] font-semibold uppercase tracking-[0.2em] opacity-0 transition-all duration-300 group-hover:opacity-100 sm:block hover:bg-black hover:text-white"
         >
           Quick Add
         </button>

@@ -1,13 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fbf4f2;
-  --foreground: #26231f;
-  --ivory: #fbf4f2;
-  --blush: #f0dcdd;
-  --sand: #f5e9e7;
-  --ink: #26231f;
-  --line: rgba(38, 35, 31, .14);
+  --background: #f5f3ee;
+  --foreground: #0a0a0a;
 }
 
 * {
@@ -22,30 +17,7 @@ body {
   margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), sans-serif;
-}
-
-/* Shared editorial language for shopper pages. */
-main { background-color: var(--ivory); color: var(--ink); }
-input, select, textarea { accent-color: #8b625f; }
-input:focus-visible, select:focus-visible, textarea:focus-visible,
-button:focus-visible, a:focus-visible { outline-color: #8b625f; }
-::placeholder { color: rgba(38, 35, 31, .4); }
-
-.editorial-heading { font-family: Georgia, 'Times New Roman', serif; font-weight: 400; letter-spacing: -.055em; }
-.editorial-panel { background: linear-gradient(135deg, #fbf4f2 0%, #f0dcdd 100%); }
-
-.velmori-hero-image img {
-  animation: hero-image-in 900ms cubic-bezier(.2,.75,.2,1) both;
-}
-
-@keyframes hero-image-in {
-  from { opacity: 0; transform: scale(1.025); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 ::selection {
@@ -73,134 +45,4 @@ img {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
-}
-
-/* Jacket looks keep rotating; only the collage transition runs once. */
-.hero-look {
-  animation-duration: 9.6s;
-  animation-timing-function: cubic-bezier(.22,.61,.36,1);
-  animation-iteration-count: infinite;
-  animation-fill-mode: both;
-  transform-origin: center 38%;
-  scale: 1 1;
-  -webkit-mask-image: url('/Images/campaign-worn-jacket-mask.svg');
-  mask-image: url('/Images/campaign-worn-jacket-mask.svg');
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-}
-
-.hero-model-base {
-  clip-path: inset(0 0 17%);
-  -webkit-mask-image: url('/Images/campaign-model-mask.svg');
-  mask-image: url('/Images/campaign-model-mask.svg');
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-}
-
-.hero-look { animation-duration: 9.6s; }
-.hero-look-ivory { animation-name: velmori-jacket-ivory-loop; }
-.hero-look-suede { animation-name: velmori-jacket-suede-loop; }
-.hero-look-navy { animation-name: velmori-jacket-navy-loop; }
-
-@keyframes velmori-jacket-ivory-loop {
-  0% { opacity: 0; transform: translateX(110vw) scale(.94); }
-  6.25%, 27.083% { opacity: 1; transform: translateX(0) scale(1); }
-  33.333% { opacity: 0; transform: translateX(-110vw) scale(1.02); }
-  33.334%, 100% { opacity: 0; transform: translateX(110vw) scale(.94); }
-}
-
-@keyframes velmori-jacket-suede-loop {
-  33.333% { opacity: 0; transform: translateX(110vw) scale(.94); }
-  39.583%, 60.417% { opacity: 1; transform: translateX(0) scale(1); }
-  66.667% { opacity: 0; transform: translateX(-110vw) scale(1.02); }
-  66.668%, 100% { opacity: 0; transform: translateX(110vw) scale(.94); }
-}
-
-@keyframes velmori-jacket-navy-loop {
-  66.667% { opacity: 0; transform: translateX(110vw) scale(.94); }
-  72.917%, 93.75% { opacity: 1; transform: translateX(0) scale(1); }
-  100% { opacity: 0; transform: translateX(-110vw) scale(1.02); }
-}
-
-/* The jacket edit hands off to the collage once, then stays on the jacket page. */
-.hero-experience {
-  height: calc(100vh - 52px);
-  height: calc(100dvh - 52px);
-  min-height: min(420px, calc(100dvh - 52px));
-}
-
-.hero-sequence {
-  animation: hero-sequence-once 17.3s 1 both;
-}
-
-.hero-collage {
-  transform: translateX(-100%);
-  animation: hero-collage-once 17.3s 1 both;
-}
-
-.hero-collage-image {
-  opacity: 0;
-}
-
-.hero-collage-tile {
-  background-image: url('/Images/campaign-collage-landscape.png');
-  background-repeat: no-repeat;
-  background-size: 300% 200%;
-  margin: -1px;
-  opacity: 0;
-  border: 0 solid transparent;
-  animation: hero-collage-tile-loop 1s cubic-bezier(.18, .78, .22, 1) calc(10.45s + var(--tile-delay, 0s)) 1 both;
-}
-
-.collage-tile-one { background-position: 0% 0%; --tile-delay: 0s; --tile-start-transform: translate(-55%, -45%) rotate(-7deg) scale(.84); }
-.collage-tile-two { background-position: 50% 0%; --tile-delay: 800ms; --tile-start-transform: translate(18%, -65%) rotate(5deg) scale(.9); }
-.collage-tile-three { background-position: 100% 0%; --tile-delay: 1600ms; --tile-start-transform: translate(55%, -40%) rotate(8deg) scale(.84); }
-.collage-tile-four { background-position: 0% 100%; --tile-delay: 2400ms; --tile-start-transform: translate(-60%, 40%) rotate(6deg) scale(.88); }
-.collage-tile-five { background-position: 50% 100%; --tile-delay: 3200ms; --tile-start-transform: translate(-12%, 58%) rotate(-6deg) scale(.86); }
-.collage-tile-six { background-position: 100% 100%; --tile-delay: 4000ms; --tile-start-transform: translate(58%, 42%) rotate(-8deg) scale(.88); }
-
-@keyframes hero-sequence-once {
-  0%, 55.491% { transform: translateX(0); }
-  60.405%, 95.086% { transform: translateX(100%); }
-  95.087% { transform: translateX(-100%); }
-  100% { transform: translateX(0); }
-}
-
-@keyframes hero-collage-once {
-  0%, 55.491% { transform: translateX(-100%); }
-  60.405%, 95.087% { transform: translateX(0); }
-  100% { transform: translateX(100%); }
-}
-
-@keyframes hero-collage-tile-loop {
-  from {
-    opacity: 1;
-    transform: var(--tile-start-transform);
-    border: 2px solid rgba(255, 255, 255, .9);
-    box-shadow: 0 16px 32px rgba(27, 24, 22, .3);
-  }
-  100% {
-    opacity: 1;
-    transform: translate(0, 0) rotate(0) scale(1);
-    border: 0 solid transparent;
-    box-shadow: 0 0 0 rgba(27, 24, 22, 0);
-  }
-}
-
-@media (max-width: 639px) {
-  .hero-collage-tile {
-    background-image: url('/Images/campaign-collage-mobile.png');
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-sequence { animation: none !important; transform: none; }
-  .hero-collage { display: none; animation: none; transform: none; }
-  .hero-look { animation: none !important; opacity: 0; transform: none; }
-  .hero-look-ivory { opacity: 1; }
-  .hero-collage-tile { display: none; }
 }
