@@ -15,7 +15,7 @@ function sign(razorpayOrderId: string, paymentId: string, secret = SECRET) {
 }
 
 function post(body: unknown) {
-  return new Request("http://localhost/api/varify-payment", {
+  return new Request("http://localhost/api/verify-payment", {
     method: "POST",
     body: typeof body === "string" ? body : JSON.stringify(body),
   });

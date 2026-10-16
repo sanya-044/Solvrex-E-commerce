@@ -55,9 +55,11 @@ export default function Footer() {
       setStatus("success");
       setMessage("Successfully subscribed!");
       setEmail("");
-    } catch (err: any) {
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Something went wrong. Please try again.";
       setStatus("error");
-      setMessage(err.message || "Something went wrong. Please try again.");
+      setMessage(errorMessage);
     }
   };
 
