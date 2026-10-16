@@ -8,42 +8,6 @@ import { ArrowLeft, Check, Loader2 } from "lucide-react";
 
 import { useCartStore } from "@/store/cartStore";
 
-interface RazorpayPaymentResponse {
-  razorpay_payment_id?: string;
-  razorpay_order_id?: string;
-  razorpay_signature?: string;
-  [key: string]: unknown;
-}
-
-interface RazorpayOptions {
-  key: string;
-  amount: number;
-  currency: string;
-  name: string;
-  description: string;
-  order_id: string;
-  handler: (response: RazorpayPaymentResponse) => void;
-  prefill?: {
-    name?: string;
-    email?: string;
-    contact?: string;
-  };
-  theme?: { color: string };
-  modal?: { ondismiss?: () => void };
-}
-
-interface RazorpayInstance {
-  open: () => void;
-}
-
-type RazorpayConstructor = new (options: RazorpayOptions) => RazorpayInstance;
-
-declare global {
-  interface Window {
-    Razorpay?: RazorpayConstructor;
-  }
-}
-
 export default function CheckoutPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -67,15 +31,10 @@ export default function CheckoutPage() {
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderId, setOrderId] = useState("");
 
-  const setClearCartAndSucceed = () => {
-    clearCart();
-    setPlacingOrder(false);
-    setOrderSuccess(true);
-  };
-
+  // Helper function to load Razorpay script safely with a Promise
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
-      if (typeof window !== "undefined" && window.Razorpay) {
+      if (typeof window !== "undefined" && (window as any).Razorpay) {
         resolve(true);
         return;
       }
@@ -88,10 +47,12 @@ export default function CheckoutPage() {
     });
   };
 
+  // Preload Razorpay script on mount
   useEffect(() => {
     loadRazorpayScript();
   }, []);
 
+  // Protect checkout route
   useEffect(() => {
     if (status === "unauthenticated") {
       router.replace("/login?callbackUrl=/checkout");
@@ -145,6 +106,7 @@ export default function CheckoutPage() {
       session?.user?.name?.trim() ||
       "";
 
+    // Customer validation
     if (
       !customerName ||
       !form.phone.trim() ||
@@ -156,6 +118,7 @@ export default function CheckoutPage() {
       return;
     }
 
+    // Address validation
     if (
       !form.address.trim() ||
       !form.city.trim() ||
@@ -168,11 +131,13 @@ export default function CheckoutPage() {
       return;
     }
 
+    // Cart validation
     if (items.length === 0) {
       setOrderError("Your shopping bag is empty.");
       return;
     }
 
+    // Authentication check
     if (status !== "authenticated") {
       router.push("/login?callbackUrl=/checkout");
       return;
@@ -181,9 +146,10 @@ export default function CheckoutPage() {
     setPlacingOrder(true);
 
     try {
+      // If payment is online, make sure script is loaded first
       if (paymentMethod === "ONLINE") {
         const isLoaded = await loadRazorpayScript();
-        if (!isLoaded || !window.Razorpay) {
+        if (!isLoaded || !(window as any).Razorpay) {
           throw new Error("Razorpay SDK failed to load. Check your internet connection.");
         }
       }
@@ -224,19 +190,21 @@ export default function CheckoutPage() {
 
       const currentOrderId = data.orderId || "";
 
+      // If online payment is selected, trigger official Razorpay script modal
       if (paymentMethod === "ONLINE") {
         if (!data.razorpayOrderId) {
           throw new Error("Failed to initialize online payment order.");
         }
 
-        const options: RazorpayOptions = {
+        const options = {
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_YourTestKeyId",
           amount: Math.round(total * 100),
           currency: "INR",
           name: "VELMORI",
           description: "Order Payment",
           order_id: data.razorpayOrderId,
-          handler: function (response: RazorpayPaymentResponse) {
+          handler: function (response: any) {
+            // Optional: still try to verify in background without blocking the UI
             fetch("/api/verify-payment", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -244,19 +212,13 @@ export default function CheckoutPage() {
                 ...response,
                 orderId: currentOrderId,
               }),
-            })
-              .then((verifyResponse) => {
-                if (!verifyResponse.ok) {
-                  console.error(
-                    "Payment verification failed:",
-                    verifyResponse.status
-                  );
-                }
-              })
-              .catch(err => console.error("Background verification error:", err));
+            }).catch(err => console.error("Background verification error:", err));
 
+            // Instantly show the exact same Thank You card
             setOrderId(currentOrderId);
-            setClearCartAndSucceed();
+            clearCart();
+            setPlacingOrder(false);
+            setOrderSuccess(true);
           },
           prefill: {
             name: customerName,
@@ -272,16 +234,16 @@ export default function CheckoutPage() {
           },
         };
 
-        if (!window.Razorpay) {
-          throw new Error("Razorpay SDK is not available.");
-        }
-        const rzp = new window.Razorpay(options);
+        const rzp = new (window as any).Razorpay(options);
         rzp.open();
         return; 
       }
 
+      // COD flow completion
       setOrderId(currentOrderId);
-      setClearCartAndSucceed();
+      clearCart();
+      setPlacingOrder(false);
+      setOrderSuccess(true);
     } catch (error) {
       console.error("Unable to place order:", error);
       setOrderError(
@@ -293,6 +255,14 @@ export default function CheckoutPage() {
     }
   };
 
+  // Helper to cleanly clear cart and trigger success state
+  const setClearCartAndSucceed = () => {
+    clearCart();
+    setPlacingOrder(false);
+    setOrderSuccess(true);
+  };
+
+  // Loading authentication state
   if (status === "loading") {
     return (
       <main className="min-h-screen bg-[#fbf4f2] px-6 py-20">
@@ -303,6 +273,7 @@ export default function CheckoutPage() {
     );
   }
 
+  // Redirecting unauthenticated user
   if (status === "unauthenticated") {
     return (
       <main className="min-h-screen bg-[#fbf4f2] px-6 py-20">
@@ -315,6 +286,7 @@ export default function CheckoutPage() {
     );
   }
 
+  // Successful order screen
   if (orderSuccess) {
     return (
       <main className="min-h-screen bg-[#fbf4f2]">
@@ -325,7 +297,7 @@ export default function CheckoutPage() {
             </div>
 
             <p className="mt-8 text-[9px] uppercase tracking-[0.3em] text-black/40">
-              Order Received
+              Order Confirmed
             </p>
 
             <h1 className="mt-3 text-4xl font-medium tracking-[-0.06em] md:text-5xl">
@@ -333,7 +305,7 @@ export default function CheckoutPage() {
             </h1>
 
             <p className="mx-auto mt-5 max-w-md text-sm leading-6 text-black/55">
-              Your order has been received and is awaiting confirmation. You can follow its status anytime under Your Orders.
+              Your order has been placed successfully. We&apos;ll process your order and prepare it for delivery.
             </p>
 
             {orderId && (
@@ -350,10 +322,10 @@ export default function CheckoutPage() {
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:justify-center">
               <button
                 type="button"
-                onClick={() => router.push("/orders")}
+                onClick={() => router.push("/account")}
                 className="h-12 bg-[#26231f] px-8 text-[9px] font-bold uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-80"
               >
-                Track Order
+                View Account
               </button>
 
               <button
@@ -372,6 +344,7 @@ export default function CheckoutPage() {
 
   return (
     <main className="min-h-screen bg-[#fbf4f2]">
+      {/* HEADER */}
       <div className="border-b border-black/10">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-7">
           <Link
@@ -393,9 +366,12 @@ export default function CheckoutPage() {
         </div>
       </div>
 
+      {/* CONTENT */}
       <div className="mx-auto max-w-7xl px-6 py-12 lg:py-16">
         <div className="grid gap-12 lg:grid-cols-[1fr_420px] lg:items-start">
+          {/* LEFT */}
           <div>
+            {/* CUSTOMER INFORMATION */}
             <div>
               <p className="text-[9px] uppercase tracking-[0.25em] text-black/40">
                 01
@@ -445,6 +421,7 @@ export default function CheckoutPage() {
               </div>
             </div>
 
+            {/* ADDRESS */}
             <div className="mt-10 border-t border-black/10 pt-8">
               <p className="text-[9px] uppercase tracking-[0.25em] text-black/40">
                 02
@@ -506,6 +483,7 @@ export default function CheckoutPage() {
               </div>
             </div>
 
+            {/* PAYMENT */}
             <div className="mt-10 border-t border-black/10 pt-8">
               <p className="text-[9px] uppercase tracking-[0.25em] text-black/40">
                 03
@@ -516,6 +494,7 @@ export default function CheckoutPage() {
               </h2>
 
               <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                {/* COD Option */}
                 <div
                   onClick={() => setPaymentMethod("COD")}
                   className={`cursor-pointer border bg-[#fcfaf6] p-6 transition-all ${
@@ -547,6 +526,7 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
+                {/* Online Payment Option */}
                 <div
                   onClick={() => setPaymentMethod("ONLINE")}
                   className={`cursor-pointer border bg-[#fcfaf6] p-6 transition-all ${
@@ -580,6 +560,7 @@ export default function CheckoutPage() {
               </div>
             </div>
 
+            {/* ERROR */}
             {orderError && (
               <div className="mt-8 border border-red-300 bg-red-50 px-4 py-4">
                 <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-red-600">
@@ -589,6 +570,7 @@ export default function CheckoutPage() {
             )}
           </div>
 
+          {/* RIGHT — ORDER SUMMARY */}
           <aside className="border border-black/10 bg-[#fcfaf6]">
             <div className="flex items-center justify-between border-b border-black/10 px-6 py-6">
               <h2 className="text-xl font-medium tracking-[-0.04em]">
@@ -600,6 +582,7 @@ export default function CheckoutPage() {
               </p>
             </div>
 
+            {/* ITEMS */}
             <div className="divide-y divide-black/10">
               {items.map((item) => (
                 <div
@@ -639,6 +622,7 @@ export default function CheckoutPage() {
               ))}
             </div>
 
+            {/* TOTALS */}
             <div className="border-t border-black/10 p-6">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-black/50">Subtotal</span>

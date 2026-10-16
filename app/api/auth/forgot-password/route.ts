@@ -4,11 +4,7 @@ import { Resend } from "resend";
 
 import clientPromise from "@/lib/mongodb";
 
-function getResendClient() {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return null;
-  return new Resend(apiKey);
-}
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
   try {
@@ -68,16 +64,6 @@ export async function POST(request: Request) {
       process.env.APP_URL || "http://localhost:3000";
 
     const resetUrl = `${appUrl}/reset-password?token=${rawToken}`;
-
-    const resend = getResendClient();
-
-    if (!resend) {
-      console.warn("RESEND_API_KEY is not configured; email delivery skipped.");
-      return NextResponse.json({
-        message:
-          "If an account exists for this email, a reset link has been sent.",
-      });
-    }
 
     const { error } = await resend.emails.send({
       from: "VELMORI <onboarding@resend.dev>",

@@ -17,7 +17,7 @@ export default function WishlistPage() {
 
   if (items.length === 0) {
     return (
-      <main className="flex min-h-[70vh] items-center justify-center bg-[#f7f6f2] px-5">
+      <main className="flex min-h-[70vh] items-center justify-center bg-[#fbf4f2] px-5">
         <div className="text-center">
 
           <Heart
@@ -30,7 +30,7 @@ export default function WishlistPage() {
             VELMORI / WISHLIST
           </p>
 
-          <h1 className="text-5xl font-black uppercase tracking-[-0.07em]">
+          <h1 className="text-5xl font-medium tracking-[-0.07em]">
             Nothing Saved
           </h1>
 
@@ -42,7 +42,7 @@ export default function WishlistPage() {
 
           <Link
             href="/shop"
-            className="mt-8 inline-flex bg-black px-8 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white"
+            className="mt-8 inline-flex bg-[#26231f] px-8 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-white"
           >
             Explore Collection
           </Link>
@@ -53,7 +53,7 @@ export default function WishlistPage() {
   }
 
   return (
-    <main className="bg-[#f7f6f2]">
+    <main className="bg-[#fbf4f2]">
 
       <section className="border-b border-black/10 px-5 pb-10 pt-16 sm:px-8 lg:px-12 lg:pb-14 lg:pt-24">
         <div className="mx-auto max-w-[1600px]">
@@ -64,7 +64,7 @@ export default function WishlistPage() {
 
           <div className="flex items-end justify-between gap-5">
 
-            <h1 className="text-6xl font-black uppercase leading-[0.85] tracking-[-0.07em] sm:text-7xl lg:text-[8rem]">
+            <h1 className="text-6xl font-medium leading-[0.85] tracking-[-0.07em] sm:text-7xl lg:text-[8rem]">
               Saved
             </h1>
 
@@ -85,7 +85,7 @@ export default function WishlistPage() {
             {items.map((product) => (
               <article key={product.id}>
 
-                <div className="group relative aspect-[3/4] overflow-hidden bg-[#e9e6df]">
+                <div className="group relative aspect-[3/4] overflow-hidden bg-[#f0dcdd]">
 
                   <Link
                     href={`/product/${product.id}`}
@@ -104,7 +104,7 @@ export default function WishlistPage() {
                         product.id
                       )
                     }
-                    className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center bg-white transition-colors hover:bg-black hover:text-white"
+                    className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center bg-[#fcfaf6] transition-colors hover:bg-[#26231f] hover:text-white"
                     aria-label="Remove from wishlist"
                   >
                     <Trash2

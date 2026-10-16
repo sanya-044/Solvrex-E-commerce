@@ -20,7 +20,7 @@ const values = [
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-[#f5f3ee] text-[#0a0a0a]">
+    <main className="min-h-screen bg-[#fbf4f2] text-[#26231f]">
 
       {/* =====================================
           HERO
@@ -34,7 +34,7 @@ export default function AboutPage() {
             VELMORI / ABOUT
           </p>
 
-          <h1 className="max-w-[1200px] text-6xl font-black uppercase leading-[0.82] tracking-[-0.08em] sm:text-7xl lg:text-[10rem]">
+          <h1 className="max-w-[1200px] text-6xl font-medium leading-[0.82] tracking-[-0.08em] sm:text-7xl lg:text-[10rem]">
             Made for
             <br />
             movement.
@@ -85,7 +85,7 @@ export default function AboutPage() {
 
         <div className="mx-auto max-w-[1600px]">
 
-          <div className="relative aspect-[16/8] overflow-hidden bg-black">
+          <div className="relative aspect-[16/8] overflow-hidden bg-[#26231f]">
 
             <img
               src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1800&q=90"
@@ -93,7 +93,7 @@ export default function AboutPage() {
               className="h-full w-full object-cover"
             />
 
-            <div className="absolute inset-0 bg-black/20" />
+            <div className="absolute inset-0 bg-[#26231f]/20" />
 
             <div className="absolute bottom-7 left-7 text-white sm:bottom-10 sm:left-10">
 
@@ -101,7 +101,7 @@ export default function AboutPage() {
                 VELMORI / 2026
               </p>
 
-              <p className="mt-3 text-3xl font-black uppercase tracking-[-0.06em] sm:text-5xl">
+              <p className="mt-3 text-3xl font-medium tracking-[-0.06em] sm:text-5xl">
                 The new standard.
               </p>
 
@@ -141,7 +141,7 @@ export default function AboutPage() {
                   {value.number}
                 </p>
 
-                <h2 className="mt-8 text-3xl font-black uppercase tracking-[-0.06em]">
+                <h2 className="mt-8 text-3xl font-medium tracking-[-0.06em]">
                   {value.title}
                 </h2>
 
@@ -162,7 +162,7 @@ export default function AboutPage() {
           PHILOSOPHY
       ===================================== */}
 
-      <section className="border-y border-black/10 bg-[#e9e6df] px-5 py-24 sm:px-8 lg:px-12 lg:py-36">
+      <section className="border-y border-black/10 bg-[#f0dcdd] px-5 py-24 sm:px-8 lg:px-12 lg:py-36">
 
         <div className="mx-auto max-w-[1400px]">
 
@@ -170,7 +170,7 @@ export default function AboutPage() {
             The VELMORI Philosophy
           </p>
 
-          <h2 className="mt-10 text-center text-5xl font-black uppercase leading-[0.85] tracking-[-0.07em] sm:text-7xl lg:text-[9rem]">
+          <h2 className="mt-10 text-center text-5xl font-medium leading-[0.85] tracking-[-0.07em] sm:text-7xl lg:text-[9rem]">
             Less noise.
             <br />
             More character.
@@ -192,7 +192,7 @@ export default function AboutPage() {
           CTA
       ===================================== */}
 
-      <section className="bg-[#0a0a0a] px-5 py-24 text-white sm:px-8 lg:px-12 lg:py-36">
+      <section className="bg-[#26231f] px-5 py-24 text-white sm:px-8 lg:px-12 lg:py-36">
 
         <div className="mx-auto max-w-[1100px] text-center">
 
@@ -200,7 +200,7 @@ export default function AboutPage() {
             Ready when you are
           </p>
 
-          <h2 className="mt-7 text-5xl font-black uppercase leading-[0.85] tracking-[-0.07em] sm:text-7xl lg:text-8xl">
+          <h2 className="mt-7 text-5xl font-medium leading-[0.85] tracking-[-0.07em] sm:text-7xl lg:text-8xl">
             Find your
             <br />
             uniform.
@@ -213,7 +213,7 @@ export default function AboutPage() {
 
           <Link
             href="/shop"
-            className="mt-10 inline-flex bg-white px-8 py-4 text-[9px] font-bold uppercase tracking-[0.2em] text-black transition-opacity hover:opacity-80"
+            className="mt-10 inline-flex bg-[#fcfaf6] px-8 py-4 text-[9px] font-bold uppercase tracking-[0.2em] text-black transition-opacity hover:opacity-80"
           >
             Explore Collection
           </Link>

@@ -1,18 +1,18 @@
 export default function ReturnsPage() {
   return (
-    <main className="min-h-screen bg-black text-white px-6 py-20">
+    <main className="min-h-screen bg-[#fbf4f2] px-5 py-16 text-[#26231f] sm:px-8 sm:py-24">
       <div className="mx-auto max-w-4xl">
-        <p className="mb-4 text-sm tracking-[0.3em] text-gray-400">
+        <p className="mb-4 text-[10px] uppercase tracking-[0.22em] text-[#755d59]">
           VELMORI
         </p>
 
-        <h1 className="text-4xl font-medium tracking-tight md:text-6xl">
+        <h1 className="font-serif text-5xl font-normal tracking-[-0.055em] md:text-7xl">
           Returns
         </h1>
 
-        <div className="mt-12 space-y-10 text-gray-300 leading-7">
-          <section>
-            <h2 className="mb-3 text-xl text-white">
+        <div className="mt-10 divide-y divide-[#26231f]/15 border-y border-[#26231f]/15 text-[#514b45]">
+          <section className="py-7 sm:py-8">
+            <h2 className="mb-3 text-xl font-medium text-[#26231f]">
               Return Eligibility
             </h2>
 
@@ -23,8 +23,8 @@ export default function ReturnsPage() {
             </p>
           </section>
 
-          <section>
-            <h2 className="mb-3 text-xl text-white">
+          <section className="py-7 sm:py-8">
+            <h2 className="mb-3 text-xl font-medium text-[#26231f]">
               Return Request
             </h2>
 
@@ -34,8 +34,8 @@ export default function ReturnsPage() {
             </p>
           </section>
 
-          <section>
-            <h2 className="mb-3 text-xl text-white">
+          <section className="py-7 sm:py-8">
+            <h2 className="mb-3 text-xl font-medium text-[#26231f]">
               Condition of Items
             </h2>
 
@@ -46,8 +46,8 @@ export default function ReturnsPage() {
             </p>
           </section>
 
-          <section>
-            <h2 className="mb-3 text-xl text-white">
+          <section className="py-7 sm:py-8">
+            <h2 className="mb-3 text-xl font-medium text-[#26231f]">
               Refunds
             </h2>
 
@@ -58,8 +58,8 @@ export default function ReturnsPage() {
             </p>
           </section>
 
-          <section>
-            <h2 className="mb-3 text-xl text-white">
+          <section className="py-7 sm:py-8">
+            <h2 className="mb-3 text-xl font-medium text-[#26231f]">
               Need Help?
             </h2>
 
