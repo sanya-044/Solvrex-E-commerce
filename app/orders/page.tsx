@@ -73,13 +73,13 @@ export default async function OrdersPage() {
                     Items ({order.items.length})
                   </p>
                   <div className="divide-y divide-black/5">
-                    {order.items.map((item: any, idx: number) => (
+                    {order.items.map((item, idx) => (
                       <div key={idx} className="py-3 flex items-center justify-between gap-4">
                         <div className="flex items-center gap-4">
-                          {item.image || item.img || item.imageUrl ? (
+                          {item.image ? (
                             <div className="relative h-16 w-12 flex-shrink-0 bg-neutral-100 border border-black/10 overflow-hidden">
                               <img
-                                src={item.image || item.img || item.imageUrl}
+                                src={item.image}
                                 alt={item.name || "Product image"}
                                 className="h-full w-full object-cover"
                               />
@@ -87,7 +87,7 @@ export default async function OrdersPage() {
                           ) : null}
                           <div>
                             <p className="text-xs font-bold uppercase tracking-wide">
-                              {item.name || item.title || "Product"}
+                              {item.name || "Product"}
                             </p>
                             <p className="text-[11px] text-black/50 mt-0.5">
                               Qty: {item.quantity} {item.size ? `· Size: ${item.size}` : ""} {item.color ? `· Color: ${item.color}` : ""}

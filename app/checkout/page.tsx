@@ -1,12 +1,48 @@
  "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { ArrowLeft, Check, Loader2 } from "lucide-react";
 
 import { useCartStore } from "@/store/cartStore";
+
+interface RazorpayPaymentResponse {
+  razorpay_payment_id?: string;
+  razorpay_order_id?: string;
+  razorpay_signature?: string;
+  [key: string]: unknown;
+}
+
+interface RazorpayOptions {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  handler: (response: RazorpayPaymentResponse) => void | Promise<void>;
+  prefill?: {
+    name?: string;
+    email?: string;
+    contact?: string;
+  };
+  theme?: { color: string };
+  modal?: { ondismiss?: () => void };
+}
+
+interface RazorpayInstance {
+  open: () => void;
+}
+
+type RazorpayConstructor = new (options: RazorpayOptions) => RazorpayInstance;
+
+declare global {
+  interface Window {
+    Razorpay?: RazorpayConstructor;
+  }
+}
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -28,13 +64,15 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<"COD" | "ONLINE">("COD");
   const [orderError, setOrderError] = useState("");
   const [placingOrder, setPlacingOrder] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const isVerifyingRef = useRef(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderId, setOrderId] = useState("");
 
   // Helper function to load Razorpay script safely with a Promise
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
-      if (typeof window !== "undefined" && (window as any).Razorpay) {
+      if (typeof window !== "undefined" && window.Razorpay) {
         resolve(true);
         return;
       }
@@ -99,6 +137,7 @@ export default function CheckoutPage() {
   }, [items]);
 
    const handlePlaceOrder = async () => {
+    if (placingOrder) return;
     setOrderError("");
 
     const customerName =
@@ -149,7 +188,7 @@ export default function CheckoutPage() {
       // If payment is online, make sure script is loaded first
       if (paymentMethod === "ONLINE") {
         const isLoaded = await loadRazorpayScript();
-        if (!isLoaded || !(window as any).Razorpay) {
+        if (!isLoaded || !window.Razorpay) {
           throw new Error("Razorpay SDK failed to load. Check your internet connection.");
         }
       }
@@ -196,29 +235,64 @@ export default function CheckoutPage() {
           throw new Error("Failed to initialize online payment order.");
         }
 
-        const options = {
+        const options: RazorpayOptions = {
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_YourTestKeyId",
           amount: Math.round(total * 100),
           currency: "INR",
           name: "VELMORI",
           description: "Order Payment",
           order_id: data.razorpayOrderId,
-          handler: function (response: any) {
-            // Optional: still try to verify in background without blocking the UI
-            fetch("/api/verify-payment", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                ...response,
-                orderId: currentOrderId,
-              }),
-            }).catch(err => console.error("Background verification error:", err));
+          handler: async function (response: RazorpayPaymentResponse) {
+            // Prevent duplicate verification submissions
+            if (isVerifyingRef.current) return;
+            isVerifyingRef.current = true;
+            setIsVerifying(true);
+            setPlacingOrder(true);
+            setOrderError("");
 
-            // Instantly show the exact same Thank You card
-            setOrderId(currentOrderId);
-            clearCart();
-            setPlacingOrder(false);
-            setOrderSuccess(true);
+            try {
+              const verifyRes = await fetch("/api/verify-payment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  orderId: currentOrderId,
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                }),
+              });
+
+              let verifyData: { success?: boolean; message?: string } | null = null;
+              try {
+                verifyData = await verifyRes.json();
+              } catch {
+                // Non-JSON response
+              }
+
+              if (!verifyRes.ok || !verifyData?.success) {
+                const message =
+                  verifyData?.message ||
+                  (response.razorpay_payment_id
+                    ? `Payment verification could not be confirmed. If your payment was deducted (Payment ID: ${response.razorpay_payment_id}), please contact support with Order ID: ${currentOrderId}.`
+                    : "Payment verification failed. Please try again or contact support.");
+                throw new Error(message);
+              }
+
+              // Display Thank You / success state only after server confirms verification
+              setOrderId(currentOrderId);
+              setClearCartAndSucceed();
+            } catch (err) {
+              console.error("Payment verification failed:", err);
+              setOrderError(
+                err instanceof Error
+                  ? err.message
+                  : "Payment verification failed. Please contact support."
+              );
+              setPlacingOrder(false);
+            } finally {
+              setIsVerifying(false);
+              isVerifyingRef.current = false;
+            }
           },
           prefill: {
             name: customerName,
@@ -228,22 +302,25 @@ export default function CheckoutPage() {
           theme: { color: "#000000" },
           modal: {
             ondismiss: function () {
-              setPlacingOrder(false);
-              setOrderError("Payment cancelled by user.");
+              if (!isVerifyingRef.current) {
+                setPlacingOrder(false);
+                setOrderError("Payment cancelled by user.");
+              }
             },
           },
         };
 
-        const rzp = new (window as any).Razorpay(options);
+        if (!window.Razorpay) {
+          throw new Error("Razorpay SDK is not available.");
+        }
+        const rzp = new window.Razorpay(options);
         rzp.open();
         return; 
       }
 
       // COD flow completion
       setOrderId(currentOrderId);
-      clearCart();
-      setPlacingOrder(false);
-      setOrderSuccess(true);
+      setClearCartAndSucceed();
     } catch (error) {
       console.error("Unable to place order:", error);
       setOrderError(
@@ -658,7 +735,11 @@ export default function CheckoutPage() {
                 {placingOrder ? (
                   <>
                     <Loader2 size={15} className="animate-spin" />
-                    {paymentMethod === "ONLINE" ? "Connecting Gateway..." : "Placing Order"}
+                    {isVerifying
+                      ? "Verifying Payment..."
+                      : paymentMethod === "ONLINE"
+                      ? "Connecting Gateway..."
+                      : "Placing Order"}
                   </>
                 ) : (
                   paymentMethod === "ONLINE" ? "Proceed to Payment" : "Place Order"
