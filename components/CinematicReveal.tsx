@@ -13,12 +13,11 @@ export default function CinematicReveal() {
     if (!section) return;
 
     let hasRevealed = false;
-    let observer: IntersectionObserver | undefined;
     const reveal = () => {
       if (hasRevealed) return;
       hasRevealed = true;
       setRevealed(true);
-      observer?.disconnect();
+      observer.disconnect();
       window.removeEventListener("scroll", checkVisibility);
     };
     const checkVisibility = () => {
@@ -26,7 +25,7 @@ export default function CinematicReveal() {
       if (bounds.top < window.innerHeight * 0.45 && bounds.bottom > window.innerHeight * 0.55) reveal();
     };
 
-    observer = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) reveal();
       },
@@ -37,7 +36,7 @@ export default function CinematicReveal() {
     window.addEventListener("scroll", checkVisibility, { passive: true });
     checkVisibility();
     return () => {
-      observer?.disconnect();
+      observer.disconnect();
       window.removeEventListener("scroll", checkVisibility);
     };
   }, []);
